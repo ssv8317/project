@@ -18,10 +18,9 @@ namespace HomeMate.Data
 
             var mongoUrl = new MongoUrl(connectionString);
             var client = new MongoClient(mongoUrl);
-            Database = client.GetDatabase(mongoUrl.DatabaseName);
+            Database = client.GetDatabase(mongoUrl.DatabaseName ?? "homemate");
         }
 
-        // Expose the Users collection
-        public IMongoCollection<User> Users => Database.GetCollection<User>("Users");
+        public IMongoCollection<User> Users => Database.GetCollection<User>("users");
     }
 }
