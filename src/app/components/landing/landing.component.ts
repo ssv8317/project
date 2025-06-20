@@ -7,6 +7,33 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <div class="flex items-center">
+            <a routerLink="/" class="flex items-center">
+              <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-2 rounded-lg font-bold text-xl shadow-lg">
+                HM
+              </div>
+              <span class="ml-3 text-xl font-bold text-gray-800">HomeMate</span>
+            </a>
+          </div>
+
+          <!-- Navigation Links -->
+          <div class="flex items-center space-x-4">
+            <a routerLink="/login" class="text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200">
+              Login
+            </a>
+            <a routerLink="/register" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition-all duration-200 shadow-lg">
+              Sign Up
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
     <!-- Hero Section -->
     <section class="bg-gradient-to-br from-primary-50 to-white py-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
