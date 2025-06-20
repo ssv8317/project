@@ -1,57 +1,35 @@
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-  <!-- Enhanced Header -->
-  <header class="bg-white shadow-lg border-b border-gray-200">
+<div class="min-h-screen bg-gray-50">
+  <!-- Professional Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20">
+      <div class="flex justify-between items-center h-16">
         <div class="flex items-center space-x-4">
-          <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-3 rounded-xl font-bold text-2xl shadow-lg">
+          <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-xl shadow-md">
             HM
           </div>
           <div>
-            <span class="text-2xl font-bold text-gray-900">HomeMate</span>
-            <p class="text-sm text-gray-500">Find Your Perfect Match</p>
+            <span class="text-xl font-bold text-gray-900">HomeMate</span>
+            <span class="text-sm text-gray-500 ml-2">Professional Housing Platform</span>
           </div>
         </div>
         
-        <!-- Navigation Menu -->
+        <!-- Navigation -->
         <nav class="flex items-center space-x-8">
-          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
-            Home
-          </a>
-          <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
-            My Profile
-          </a>
+          <a href="#properties" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Properties</a>
+          <a href="#services" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Services</a>
+          <a href="#support" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Support</a>
           
           <div class="flex items-center space-x-4">
-            <div class="relative">
-              <button class="p-2 text-gray-400 hover:text-gray-600 relative">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 01-7.5-7.5H7.5A7.5 7.5 0 0115 12v5z"/>
-                </svg>
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-              </button>
-            </div>
-            <div class="relative">
-              <button class="p-2 text-gray-400 hover:text-gray-600 relative">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                </svg>
-                <span class="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">5</span>
-              </button>
-            </div>
-          </div>
-          
-          <div class="flex items-center space-x-3">
             <div class="text-right">
-              <p class="text-sm font-medium text-gray-900">{{ currentUser?.fullName || 'User' }}</p>
-              <p class="text-xs text-gray-500">Premium Member</p>
+              <p class="text-sm font-medium text-gray-900">{{ currentUser?.fullName || 'Professional User' }}</p>
+              <p class="text-xs text-blue-600">Premium Account</p>
             </div>
-            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
               {{ getInitials(currentUser?.fullName) }}
             </div>
             <button 
               (click)="logout()" 
-              class="text-red-600 hover:text-red-800 font-medium px-4 py-2 rounded-lg hover:bg-red-50 transition-all duration-200"
+              class="text-red-600 hover:text-red-800 font-medium px-3 py-2 rounded-lg hover:bg-red-50 transition-all"
             >
               Logout
             </button>
@@ -62,65 +40,144 @@
   </header>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Enhanced Welcome Section -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl p-8 mb-8 text-white">
+    <!-- Professional Welcome Banner -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg p-8 mb-8 text-white">
       <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-6">
-          <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
-            <div class="w-16 h-16 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
-              {{ getInitials(currentUser?.fullName) }}
+        <div>
+          <h1 class="text-3xl font-bold mb-2">Welcome to HomeMate Professional</h1>
+          <p class="text-blue-100 text-lg mb-4">Your trusted partner in finding premium housing solutions</p>
+          <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>Verified Properties</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+              </svg>
+              <span>24/7 Support</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+              </svg>
+              <span>Professional Service</span>
             </div>
           </div>
-          <div>
-            <h1 class="text-4xl font-bold mb-2">
-              Welcome back, {{ (currentUser?.fullName || '').split(' ')[0] || 'User' }}! 👋
-            </h1>
-            <p class="text-blue-100 text-lg">Ready to find your perfect home?</p>
-            <div class="flex items-center space-x-4 mt-3">
-              <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">✨ Premium Member</span>
-              <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">🏆 Top Rated</span>
-            </div>
+        </div>
+        <div class="text-right">
+          <div class="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+            <p class="text-sm text-blue-100">Your Budget Range</p>
+            <p class="text-2xl font-bold">{{ currentUser?.budgetRange || '$1000-2000' }}</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Housing Search Section -->
-    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-      <h2 class="text-3xl font-bold text-gray-900 mb-6">Find Your Perfect Home</h2>
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h10M7 11h4m6 0h2m-6 4h2"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Available Properties</p>
+            <p class="text-2xl font-bold text-gray-900">{{ featuredListings.length + 15 }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Avg. Monthly Rent</p>
+            <p class="text-2xl font-bold text-gray-900">$1,350</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Customer Rating</p>
+            <p class="text-2xl font-bold text-gray-900">4.8/5</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Active Users</p>
+            <p class="text-2xl font-bold text-gray-900">2,847</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Property Search Section -->
+    <div id="properties" class="bg-white rounded-xl shadow-lg p-8 mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">Find Your Perfect Property</h2>
+          <p class="text-gray-600 mt-1">Search through our curated collection of premium properties</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            Save Search
+          </button>
+          <button class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            View Map
+          </button>
+        </div>
+      </div>
       
-      <!-- Search Form -->
+      <!-- Enhanced Search Form -->
       <form [formGroup]="housingSearchForm" (ngSubmit)="searchHousing()" class="mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <!-- ZIP Code -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">ZIP Code</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
             <input
               type="text"
               formControlName="zipCode"
-              placeholder="e.g., 10001"
+              placeholder="ZIP Code or City"
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              [class.border-red-500]="housingSearchForm.get('zipCode')?.invalid && housingSearchForm.get('zipCode')?.touched"
             >
-            <div *ngIf="housingSearchForm.get('zipCode')?.invalid && housingSearchForm.get('zipCode')?.touched" class="text-red-500 text-sm mt-1">
-              Please enter a valid 5-digit ZIP code
-            </div>
           </div>
 
-          <!-- Budget Range -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Max Budget</label>
             <select formControlName="maxPrice" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">Any Budget</option>
-              <option value="800">Under $800</option>
-              <option value="1200">Under $1,200</option>
-              <option value="1600">Under $1,600</option>
+              <option value="1000">Under $1,000</option>
+              <option value="1500">Under $1,500</option>
               <option value="2000">Under $2,000</option>
               <option value="2500">Under $2,500</option>
+              <option value="3000">Under $3,000</option>
             </select>
           </div>
 
-          <!-- Bedrooms -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Bedrooms</label>
             <select formControlName="bedrooms" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -131,22 +188,33 @@
             </select>
           </div>
 
-          <!-- Search Button -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Property Type</label>
+            <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="">All Types</option>
+              <option value="apartment">Apartment</option>
+              <option value="house">House</option>
+              <option value="condo">Condo</option>
+              <option value="studio">Studio</option>
+            </select>
+          </div>
+
           <div class="flex items-end">
             <button
               type="submit"
               [disabled]="isSearchingHousing"
-              class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 transition-all duration-200 font-medium"
+              class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 transition-all font-medium"
             >
               <span *ngIf="isSearchingHousing">Searching...</span>
-              <span *ngIf="!isSearchingHousing">🔍 Search</span>
+              <span *ngIf="!isSearchingHousing">🔍 Search Properties</span>
             </button>
           </div>
         </div>
 
         <!-- Advanced Filters -->
-        <div class="border-t border-gray-200 pt-4">
-          <div class="flex flex-wrap gap-4">
+        <div class="border-t border-gray-200 pt-6">
+          <h4 class="text-sm font-medium text-gray-900 mb-4">Advanced Filters</h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             <label class="flex items-center">
               <input type="checkbox" formControlName="petFriendly" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
               <span class="ml-2 text-sm text-gray-700">Pet Friendly</span>
@@ -161,49 +229,53 @@
             </label>
             <label class="flex items-center">
               <input type="checkbox" formControlName="gym" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-              <span class="ml-2 text-sm text-gray-700">Gym</span>
+              <span class="ml-2 text-sm text-gray-700">Gym/Fitness</span>
+            </label>
+            <label class="flex items-center">
+              <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+              <span class="ml-2 text-sm text-gray-700">Pool</span>
+            </label>
+            <label class="flex items-center">
+              <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+              <span class="ml-2 text-sm text-gray-700">Balcony</span>
             </label>
           </div>
         </div>
       </form>
 
-      <!-- Results Section -->
+      <!-- Property Results -->
       <div *ngIf="housingResults.length > 0 || hasSearchedHousing">
-        <!-- Results Header -->
         <div class="flex justify-between items-center mb-6">
           <div>
-            <h3 class="text-2xl font-bold text-gray-900">Available Properties</h3>
-            <p class="text-gray-600 mt-1">{{ housingResults.length }} properties found</p>
+            <h3 class="text-xl font-bold text-gray-900">Search Results</h3>
+            <p class="text-gray-600">{{ housingResults.length }} properties found</p>
           </div>
           
-          <!-- Sort Options -->
           <div class="flex items-center space-x-4">
             <label class="text-sm font-medium text-gray-700">Sort by:</label>
             <select 
               (change)="onSortChange($event)"
-              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <option value="date-desc">Newest First</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
-              <option value="bedrooms-asc">Bedrooms: Low to High</option>
               <option value="rating-desc">Highest Rated</option>
             </select>
           </div>
         </div>
 
-        <!-- Housing Listings Grid -->
+        <!-- Property Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="housingResults.length > 0">
-          <div *ngFor="let listing of housingResults" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-200">
-            <!-- Image -->
+          <div *ngFor="let listing of housingResults" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 group">
             <div class="relative h-48 overflow-hidden">
               <img 
                 [src]="listing.images[0]" 
                 [alt]="listing.title"
-                class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               >
               <div class="absolute top-4 left-4">
-                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
                   ${{ listing.price }}/month
                 </span>
               </div>
@@ -212,45 +284,79 @@
                   ⭐ Featured
                 </span>
               </div>
+              <div class="absolute bottom-4 right-4">
+                <button class="bg-white bg-opacity-90 text-gray-700 p-2 rounded-full hover:bg-white transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            <!-- Content -->
             <div class="p-6">
               <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing.title }}</h4>
-              <p class="text-gray-600 mb-3">📍 {{ listing.address }}</p>
+              <p class="text-gray-600 mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                {{ listing.address }}
+              </p>
               
-              <!-- Property Details -->
               <div class="flex items-center space-x-4 mb-4 text-sm text-gray-600">
-                <span>🛏️ {{ listing.bedrooms }} bed</span>
-                <span>🚿 {{ listing.bathrooms }} bath</span>
-                <span>📐 {{ listing.squareFeet }} sq ft</span>
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
+                  </svg>
+                  {{ listing.bedrooms }} bed
+                </span>
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                  </svg>
+                  {{ listing.bathrooms }} bath
+                </span>
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                  </svg>
+                  {{ listing.squareFeet }} sq ft
+                </span>
               </div>
 
-              <!-- Amenities -->
               <div class="flex flex-wrap gap-2 mb-4">
                 <span 
                   *ngFor="let amenity of listing.amenities.slice(0, 3)" 
-                  class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
+                  class="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium"
                 >
                   {{ amenity }}
                 </span>
                 <span 
                   *ngIf="listing.amenities.length > 3"
-                  class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
+                  class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"
                 >
                   +{{ listing.amenities.length - 3 }} more
                 </span>
               </div>
 
-              <!-- Footer -->
               <div class="flex justify-between items-center pt-4 border-t border-gray-200">
                 <div class="flex items-center space-x-2">
-                  <span class="text-yellow-500">⭐</span>
-                  <span class="text-sm text-gray-600">{{ listing.landlord.rating }}</span>
+                  <div class="flex items-center">
+                    <svg class="w-4 h-4 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                    </svg>
+                    <span class="text-sm text-gray-600">{{ listing.landlord.rating }}</span>
+                  </div>
+                  <span class="text-xs text-gray-500">• {{ listing.landlord.name }}</span>
                 </div>
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
-                  View Details
-                </button>
+                <div class="flex space-x-2">
+                  <button class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                    Contact
+                  </button>
+                  <button class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    View Details
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -258,35 +364,38 @@
 
         <!-- No Results -->
         <div *ngIf="hasSearchedHousing && housingResults.length === 0" class="text-center py-12">
-          <div class="text-gray-400 mb-4">
-            <svg class="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h10M7 11h4m6 0h2m-6 4h2"/>
-            </svg>
-          </div>
+          <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h10M7 11h4m6 0h2m-6 4h2"/>
+          </svg>
           <h4 class="text-xl font-medium text-gray-900 mb-2">No properties found</h4>
-          <p class="text-gray-600 mb-4">Try adjusting your search criteria or expanding your search area.</p>
-          <button 
-            (click)="clearHousingFilters()"
-            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
-          >
-            Clear Filters
-          </button>
+          <p class="text-gray-600 mb-4">Try adjusting your search criteria or contact our support team for assistance.</p>
+          <div class="flex justify-center space-x-4">
+            <button 
+              (click)="clearHousingFilters()"
+              class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Clear Filters
+            </button>
+            <button class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+              Contact Support
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Default Featured Properties -->
+      <!-- Featured Properties (Default View) -->
       <div *ngIf="!hasSearchedHousing && featuredListings.length > 0">
-        <h3 class="text-2xl font-bold text-gray-900 mb-6">Featured Properties</h3>
+        <h3 class="text-xl font-bold text-gray-900 mb-6">Featured Properties</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div *ngFor="let listing of featuredListings" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-200">
+          <div *ngFor="let listing of featuredListings" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 group">
             <div class="relative h-48 overflow-hidden">
               <img 
                 [src]="listing.images[0]" 
                 [alt]="listing.title"
-                class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               >
               <div class="absolute top-4 left-4">
-                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
                   ${{ listing.price }}/month
                 </span>
               </div>
@@ -299,7 +408,12 @@
 
             <div class="p-6">
               <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing.title }}</h4>
-              <p class="text-gray-600 mb-3">📍 {{ listing.address }}</p>
+              <p class="text-gray-600 mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                </svg>
+                {{ listing.address }}
+              </p>
               
               <div class="flex items-center space-x-4 mb-4 text-sm text-gray-600">
                 <span>🛏️ {{ listing.bedrooms }} bed</span>
@@ -312,7 +426,7 @@
                   <span class="text-yellow-500">⭐</span>
                   <span class="text-sm text-gray-600">{{ listing.landlord.rating }}</span>
                 </div>
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
                   View Details
                 </button>
               </div>
@@ -322,55 +436,147 @@
       </div>
     </div>
 
-    <!-- Profile Summary Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Profile Card -->
-      <div class="lg:col-span-1">
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
-            <div class="flex items-center space-x-4">
-              <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <span class="text-2xl font-bold">{{ getInitials(currentUser?.fullName) }}</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold">{{ currentUser?.fullName || 'User' }}</h3>
-                <p class="text-blue-100">{{ currentUser?.occupation || 'Professional' }}</p>
-                <div class="flex items-center space-x-2 mt-1">
-                  <span class="text-sm">⭐ 4.9</span>
-                  <span class="text-sm">•</span>
-                  <span class="text-sm">{{ currentUser?.age || 'N/A' }} years old</span>
-                </div>
-              </div>
+    <!-- Professional Services Section -->
+    <div id="services" class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Services Card -->
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-6">Professional Services</h3>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-4 p-4 bg-blue-50 rounded-lg">
+            <div class="bg-blue-100 p-2 rounded-lg">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">Property Verification</h4>
+              <p class="text-gray-600 text-sm">All properties are verified and inspected by our professional team</p>
             </div>
           </div>
-          
-          <div class="p-6">
-            <div class="space-y-4">
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600 font-medium">Location:</span>
-                <span class="text-gray-900">{{ currentUser?.locationPreference || 'N/A' }}</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600 font-medium">Budget:</span>
-                <span class="text-gray-900 font-semibold text-green-600">{{ currentUser?.budgetRange || 'N/A' }}</span>
-              </div>
-            </div>
 
-            <button class="w-full mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 font-medium">
-              Edit Profile
-            </button>
+          <div class="flex items-start space-x-4 p-4 bg-green-50 rounded-lg">
+            <div class="bg-green-100 p-2 rounded-lg">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">Rent Guarantee</h4>
+              <p class="text-gray-600 text-sm">Secure payment processing with rent protection coverage</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-4 p-4 bg-purple-50 rounded-lg">
+            <div class="bg-purple-100 p-2 rounded-lg">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">Roommate Matching</h4>
+              <p class="text-gray-600 text-sm">AI-powered matching with compatible roommates</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-4 p-4 bg-yellow-50 rounded-lg">
+            <div class="bg-yellow-100 p-2 rounded-lg">
+              <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900">Instant Booking</h4>
+              <p class="text-gray-600 text-sm">Book properties instantly with our streamlined process</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- About Me Section -->
-      <div class="lg:col-span-2">
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-semibold text-gray-900">About Me</h3>
-            <button class="text-blue-500 hover:text-blue-600 font-medium">Edit</button>
+      <!-- Contact Support Card -->
+      <div id="support" class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl shadow-lg p-8 text-white">
+        <h3 class="text-2xl font-bold mb-6">Need Help? Contact Support</h3>
+        <p class="text-blue-100 mb-6">Our professional support team is available 24/7 to assist you with any questions or concerns.</p>
+        
+        <div class="space-y-4 mb-6">
+          <div class="flex items-center space-x-3">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+            </svg>
+            <span>Call: (555) 123-RENT (7368)</span>
           </div>
-          <p class="text-gray-700 leading-relaxed">{{ currentUser?.aboutMe || 'No description provided.' }}</p>
+          <div class="flex items-center space-x-3">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+            </svg>
+            <span>Email: support@homemate.com</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+            </svg>
+            <span>Live Chat: Available 24/7</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <button class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 px-4 rounded-lg transition-all backdrop-blur-sm">
+            📞 Call Now
+          </button>
+          <button class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 px-4 rounded-lg transition-all backdrop-blur-sm">
+            💬 Live Chat
+          </button>
+        </div>
+
+        <div class="mt-6 p-4 bg-white bg-opacity-10 rounded-lg backdrop-blur-sm">
+          <h4 class="font-semibold mb-2">Quick Support Topics:</h4>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">Property Issues</span>
+            <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">Payment Help</span>
+            <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">Account Support</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Professional Footer -->
+    <div class="bg-white rounded-xl shadow-lg p-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h4 class="font-bold text-gray-900 mb-4">About HomeMate Professional</h4>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            HomeMate is the leading professional housing platform, connecting quality tenants with verified properties. 
+            Our commitment to excellence ensures a seamless rental experience for all our users.
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="font-bold text-gray-900 mb-4">Quick Links</h4>
+          <div class="space-y-2 text-sm">
+            <a href="#" class="text-gray-600 hover:text-blue-600 block transition-colors">Property Management</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600 block transition-colors">Tenant Screening</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600 block transition-colors">Lease Agreements</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600 block transition-colors">Maintenance Requests</a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-bold text-gray-900 mb-4">Professional Resources</h4>
+          <div class="space-y-2 text-sm">
+            <a href="#" class="text-gray-600 hover:text-blue-600 block transition-colors">Market Reports</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600 block transition-colors">Legal Resources</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600 block transition-colors">Investment Tools</a>
+            <a href="#" class="text-gray-600 hover:text-blue-600 block transition-colors">API Documentation</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-200 mt-8 pt-6 flex justify-between items-center">
+        <p class="text-gray-500 text-sm">© 2024 HomeMate Professional. All rights reserved.</p>
+        <div class="flex space-x-4">
+          <a href="#" class="text-gray-400 hover:text-gray-600">Privacy Policy</a>
+          <a href="#" class="text-gray-400 hover:text-gray-600">Terms of Service</a>
+          <a href="#" class="text-gray-400 hover:text-gray-600">Contact</a>
         </div>
       </div>
     </div>
