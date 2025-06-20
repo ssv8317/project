@@ -63,7 +63,7 @@
           </div>
           <div>
             <h1 class="text-4xl font-bold mb-2">
-              Welcome back, {{ currentUser?.fullName?.split(' ')[0] || 'User' }}! 👋
+              Welcome back, {{ (currentUser?.fullName || '').split(' ')[0] || 'User' }}! 👋
             </h1>
             <p class="text-blue-100 text-lg">Ready to find your perfect roommate match?</p>
             <div class="flex items-center space-x-4 mt-3">
