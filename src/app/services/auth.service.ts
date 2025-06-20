@@ -29,16 +29,37 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials)
-      .pipe(
-        tap(response => {
-          if (response.token) {
-            localStorage.setItem('token', response.token);
-          }
-          localStorage.setItem('user', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user);
-        })
-      );
+    // Mock login for testing - bypass backend
+    const mockUser: User = {
+      id: 'mock-user-123',
+      fullName: 'John Doe',
+      email: credentials.email,
+      age: 25,
+      gender: 'Male',
+      occupation: 'Software Developer',
+      college: 'Tech University',
+      sleepSchedule: 'Night Owl',
+      cleanlinessLevel: 'High',
+      smokingPreference: 'No',
+      petFriendly: 'Yes',
+      budgetRange: '$1000-1500/month',
+      locationPreference: 'Downtown',
+      aboutMe: 'I am a software developer who loves coding and enjoys a clean, quiet living environment. Looking for a like-minded roommate to share a great apartment with!',
+      createdAt: new Date()
+    };
+
+    const mockResponse: AuthResponse = {
+      token: 'mock-jwt-token-' + Date.now(),
+      user: mockUser
+    };
+
+    // Store in localStorage
+    localStorage.setItem('token', mockResponse.token!);
+    localStorage.setItem('user', JSON.stringify(mockResponse.user));
+    this.currentUserSubject.next(mockResponse.user);
+
+    // Return as Observable
+    return of(mockResponse);
   }
 
   register(userData: RegisterRequest): Observable<{ user: User }> {
