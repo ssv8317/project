@@ -1,182 +1,371 @@
-<div class="min-h-screen bg-gray-50">
-  <!-- Header -->
-  <header class="bg-white shadow-sm border-b">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  <!-- Enhanced Header -->
+  <header class="bg-white shadow-lg border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center">
-          <div class="bg-blue-500 text-white px-3 py-2 rounded-lg font-bold text-xl">
+      <div class="flex justify-between items-center h-20">
+        <div class="flex items-center space-x-4">
+          <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-3 rounded-xl font-bold text-2xl shadow-lg">
             HM
           </div>
-          <span class="ml-3 text-xl font-semibold text-gray-900">HomeMate</span>
+          <div>
+            <span class="text-2xl font-bold text-gray-900">HomeMate</span>
+            <p class="text-sm text-gray-500">Find Your Perfect Match</p>
+          </div>
         </div>
-        <nav class="flex items-center space-x-4">
-          <span class="text-gray-700">Dashboard</span>
-          <span class="text-gray-500">Hi, {{ currentUser?.fullName || 'User' }}!</span>
-          <button 
-            (click)="logout()" 
-            class="text-red-600 hover:text-red-800 font-medium px-4 py-2 rounded hover:bg-red-50"
-          >
-            Logout
-          </button>
+        <nav class="flex items-center space-x-6">
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <button class="p-2 text-gray-400 hover:text-gray-600 relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 01-7.5-7.5H7.5A7.5 7.5 0 0115 12v5z"/>
+                </svg>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+              </button>
+            </div>
+            <div class="relative">
+              <button class="p-2 text-gray-400 hover:text-gray-600 relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                <span class="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">5</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="text-right">
+              <p class="text-sm font-medium text-gray-900">{{ currentUser?.fullName || 'User' }}</p>
+              <p class="text-xs text-gray-500">Premium Member</p>
+            </div>
+            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+              {{ getInitials(currentUser?.fullName) }}
+            </div>
+            <button 
+              (click)="logout()" 
+              class="text-red-600 hover:text-red-800 font-medium px-4 py-2 rounded-lg hover:bg-red-50 transition-all duration-200"
+            >
+              Logout
+            </button>
+          </div>
         </nav>
       </div>
     </div>
   </header>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Welcome Section -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-      <div class="flex items-center">
-        <div class="bg-blue-100 rounded-full p-3 mr-4">
-          <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
-            {{ getInitials(currentUser?.fullName) }}
+    <!-- Enhanced Welcome Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl p-8 mb-8 text-white">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-6">
+          <div class="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
+            <div class="w-16 h-16 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+              {{ getInitials(currentUser?.fullName) }}
+            </div>
+          </div>
+          <div>
+            <h1 class="text-4xl font-bold mb-2">
+              Welcome back, {{ currentUser?.fullName?.split(' ')[0] || 'User' }}! 👋
+            </h1>
+            <p class="text-blue-100 text-lg">Ready to find your perfect roommate match?</p>
+            <div class="flex items-center space-x-4 mt-3">
+              <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">✨ Premium Member</span>
+              <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">🏆 Top Rated</span>
+            </div>
           </div>
         </div>
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">
-            Welcome back, {{ currentUser?.fullName || 'User' }}!
-          </h1>
-          <p class="text-gray-600 mt-1">Ready to find your perfect roommate?</p>
+        <div class="text-right">
+          <div class="bg-white bg-opacity-20 rounded-xl p-4 backdrop-blur-sm">
+            <p class="text-sm text-blue-100">Profile Completion</p>
+            <div class="flex items-center space-x-2 mt-1">
+              <div class="w-24 bg-white bg-opacity-30 rounded-full h-2">
+                <div class="bg-white h-2 rounded-full" style="width: 85%"></div>
+              </div>
+              <span class="text-sm font-semibold">85%</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Profile Summary -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-      <!-- Your Profile Card -->
-      <div class="lg:col-span-1">
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Your Profile</h2>
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Age:</span>
-              <span class="font-medium">{{ currentUser?.age || 'N/A' }} years old</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Occupation:</span>
-              <span class="font-medium">{{ currentUser?.occupation || 'N/A' }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Budget:</span>
-              <span class="font-medium">{{ currentUser?.budgetRange || 'N/A' }}</span>
-            </div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Profile Views</p>
+            <p class="text-3xl font-bold text-gray-900">127</p>
+            <p class="text-sm text-green-600">+12% this week</p>
+          </div>
+          <div class="bg-blue-100 p-3 rounded-full">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
           </div>
         </div>
       </div>
 
-      <!-- Lifestyle Card -->
-      <div class="lg:col-span-1">
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-xl font-semibold text-gray-900 mb-4">Lifestyle</h3>
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Sleep Schedule:</span>
-              <span class="font-medium">{{ currentUser?.sleepSchedule || 'N/A' }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Cleanliness:</span>
-              <span class="font-medium">{{ currentUser?.cleanlinessLevel || 'N/A' }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Pet Friendly:</span>
-              <span class="font-medium">{{ currentUser?.petFriendly || 'N/A' }}</span>
-            </div>
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Matches</p>
+            <p class="text-3xl font-bold text-gray-900">23</p>
+            <p class="text-sm text-green-600">+5 new matches</p>
+          </div>
+          <div class="bg-green-100 p-3 rounded-full">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
           </div>
         </div>
       </div>
 
-      <!-- Preferences Card -->
-      <div class="lg:col-span-1">
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-xl font-semibold text-gray-900 mb-4">Preferences</h3>
-          <div class="space-y-3">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Location:</span>
-              <span class="font-medium">{{ currentUser?.locationPreference || 'N/A' }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Smoking:</span>
-              <span class="font-medium">{{ currentUser?.smokingPreference || 'N/A' }}</span>
-            </div>
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Messages</p>
+            <p class="text-3xl font-bold text-gray-900">8</p>
+            <p class="text-sm text-purple-600">3 unread</p>
+          </div>
+          <div class="bg-purple-100 p-3 rounded-full">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
           </div>
         </div>
       </div>
 
-      <!-- Quick Actions Card -->
-      <div class="lg:col-span-1">
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h3>
-          <div class="space-y-3">
-            <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">
-              Find Roommates
-            </button>
-            <button class="w-full border border-blue-500 text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-50 transition duration-200">
-              Messages
-            </button>
-            <button class="w-full border border-blue-500 text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-50 transition duration-200">
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-orange-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Saved Listings</p>
+            <p class="text-3xl font-bold text-gray-900">12</p>
+            <p class="text-sm text-orange-600">2 new today</p>
+          </div>
+          <div class="bg-orange-100 p-3 rounded-full">
+            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column - Profile & Preferences -->
+      <div class="lg:col-span-1 space-y-6">
+        <!-- Enhanced Profile Card -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
+            <div class="flex items-center space-x-4">
+              <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                <span class="text-2xl font-bold">{{ getInitials(currentUser?.fullName) }}</span>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold">{{ currentUser?.fullName || 'User' }}</h3>
+                <p class="text-blue-100">{{ currentUser?.occupation || 'Professional' }}</p>
+                <div class="flex items-center space-x-2 mt-1">
+                  <span class="text-sm">⭐ 4.9</span>
+                  <span class="text-sm">•</span>
+                  <span class="text-sm">{{ currentUser?.age || 'N/A' }} years old</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600 font-medium">Location:</span>
+                <span class="text-gray-900">{{ currentUser?.locationPreference || 'N/A' }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600 font-medium">Budget:</span>
+                <span class="text-gray-900 font-semibold text-green-600">{{ currentUser?.budgetRange || 'N/A' }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600 font-medium">College:</span>
+                <span class="text-gray-900">{{ currentUser?.college || 'N/A' }}</span>
+              </div>
+            </div>
+            
+            <div class="mt-6 pt-6 border-t border-gray-200">
+              <h4 class="font-semibold text-gray-900 mb-3">Lifestyle Preferences</h4>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-gray-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl mb-1">🌙</div>
+                  <div class="text-xs text-gray-600">{{ currentUser?.sleepSchedule || 'N/A' }}</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl mb-1">✨</div>
+                  <div class="text-xs text-gray-600">{{ currentUser?.cleanlinessLevel || 'N/A' }}</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl mb-1">🐕</div>
+                  <div class="text-xs text-gray-600">{{ currentUser?.petFriendly || 'N/A' }}</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl mb-1">🚭</div>
+                  <div class="text-xs text-gray-600">{{ currentUser?.smokingPreference || 'N/A' }}</div>
+                </div>
+              </div>
+            </div>
+
+            <button class="w-full mt-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 font-medium">
               Edit Profile
             </button>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- About Me Section -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-      <h3 class="text-xl font-semibold text-gray-900 mb-4">About Me</h3>
-      <p class="text-gray-700">{{ currentUser?.aboutMe || 'No description provided.' }}</p>
-    </div>
-
-    <!-- Find Roommates Section -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-      <h3 class="text-xl font-semibold text-gray-900 mb-4">Find Roommates in Your Area</h3>
-      
-      <form [formGroup]="zipForm" (ngSubmit)="searchRoommates()" class="mb-6">
-        <div class="flex gap-4">
-          <div class="flex-1">
-            <label for="zipCode" class="block text-sm font-medium text-gray-700 mb-2">
-              Enter ZIP Code
-            </label>
-            <input
-              type="text"
-              id="zipCode"
-              formControlName="zipCode"
-              placeholder="e.g., 10001"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              [class.border-red-500]="zipForm.get('zipCode')?.invalid && zipForm.get('zipCode')?.touched"
-            >
-            <div *ngIf="zipForm.get('zipCode')?.invalid && zipForm.get('zipCode')?.touched" class="text-red-500 text-sm mt-1">
-              <span *ngIf="zipForm.get('zipCode')?.errors?.['required']">ZIP code is required</span>
-              <span *ngIf="zipForm.get('zipCode')?.errors?.['pattern']">Please enter a valid 5-digit ZIP code</span>
-            </div>
-          </div>
-          <div class="flex items-end">
-            <button
-              type="submit"
-              [disabled]="zipForm.invalid || isSearching"
-              class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span *ngIf="isSearching">Searching...</span>
-              <span *ngIf="!isSearching">Search</span>
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+          <div class="space-y-3">
+            <button class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 font-medium flex items-center justify-center space-x-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <span>Find Roommates</span>
+            </button>
+            <button class="w-full border-2 border-blue-500 text-blue-500 py-3 px-4 rounded-lg hover:bg-blue-50 transition-all duration-200 font-medium flex items-center justify-center space-x-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              </svg>
+              <span>Messages</span>
+            </button>
+            <button class="w-full border-2 border-purple-500 text-purple-500 py-3 px-4 rounded-lg hover:bg-purple-50 transition-all duration-200 font-medium flex items-center justify-center space-x-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>
+              </svg>
+              <span>Browse Listings</span>
             </button>
           </div>
         </div>
-      </form>
-
-      <!-- Error Message -->
-      <div *ngIf="errorMessage" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-        <p class="text-yellow-800">{{ errorMessage }}</p>
       </div>
 
-      <!-- No Results Message -->
-      <div *ngIf="hasSearched && !isSearching" class="text-center py-8">
-        <div class="text-gray-400 mb-4">
-          <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+      <!-- Right Column - Main Content -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- About Me Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-semibold text-gray-900">About Me</h3>
+            <button class="text-blue-500 hover:text-blue-600 font-medium">Edit</button>
+          </div>
+          <p class="text-gray-700 leading-relaxed">{{ currentUser?.aboutMe || 'No description provided.' }}</p>
+          
+          <div class="mt-6 pt-6 border-t border-gray-200">
+            <h4 class="font-semibold text-gray-900 mb-3">Interests & Hobbies</h4>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">🎮 Gaming</span>
+              <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">🏃‍♂️ Fitness</span>
+              <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">📚 Reading</span>
+              <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">🍳 Cooking</span>
+              <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm">🎵 Music</span>
+            </div>
+          </div>
         </div>
-        <h4 class="text-lg font-medium text-gray-900 mb-2">Search functionality coming soon!</h4>
-        <p class="text-gray-600">We'll add backend integration next to find your perfect roommate matches.</p>
+
+        <!-- Recent Matches -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-semibold text-gray-900">Recent Matches</h3>
+            <button class="text-blue-500 hover:text-blue-600 font-medium">View All</button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+              <div class="flex items-center space-x-3 mb-3">
+                <div class="w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center text-white font-bold">
+                  SA
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Sarah Anderson</h4>
+                  <p class="text-sm text-gray-600">Graphic Designer, 24</p>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-green-600 font-semibold">92% Match</span>
+                <button class="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600 transition-colors duration-200">
+                  Connect
+                </button>
+              </div>
+            </div>
+
+            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+              <div class="flex items-center space-x-3 mb-3">
+                <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
+                  MJ
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Mike Johnson</h4>
+                  <p class="text-sm text-gray-600">Marketing Manager, 26</p>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-green-600 font-semibold">88% Match</span>
+                <button class="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600 transition-colors duration-200">
+                  Connect
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Find Roommates Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-900 mb-6">Find Roommates in Your Area</h3>
+          
+          <form [formGroup]="zipForm" (ngSubmit)="searchRoommates()" class="mb-6">
+            <div class="flex gap-4">
+              <div class="flex-1">
+                <label for="zipCode" class="block text-sm font-medium text-gray-700 mb-2">
+                  Enter ZIP Code
+                </label>
+                <input
+                  type="text"
+                  id="zipCode"
+                  formControlName="zipCode"
+                  placeholder="e.g., 10001"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  [class.border-red-500]="zipForm.get('zipCode')?.invalid && zipForm.get('zipCode')?.touched"
+                >
+                <div *ngIf="zipForm.get('zipCode')?.invalid && zipForm.get('zipCode')?.touched" class="text-red-500 text-sm mt-1">
+                  <span *ngIf="zipForm.get('zipCode')?.errors?.['required']">ZIP code is required</span>
+                  <span *ngIf="zipForm.get('zipCode')?.errors?.['pattern']">Please enter a valid 5-digit ZIP code</span>
+                </div>
+              </div>
+              <div class="flex items-end">
+                <button
+                  type="submit"
+                  [disabled]="zipForm.invalid || isSearching"
+                  class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                >
+                  <span *ngIf="isSearching">Searching...</span>
+                  <span *ngIf="!isSearching">Search</span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <p class="text-yellow-800">{{ errorMessage }}</p>
+          </div>
+
+          <!-- No Results Message -->
+          <div *ngIf="hasSearched && !isSearching" class="text-center py-12">
+            <div class="text-gray-400 mb-4">
+              <svg class="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <h4 class="text-xl font-medium text-gray-900 mb-2">Search functionality coming soon! 🚀</h4>
+            <p class="text-gray-600 mb-4">We're working on backend integration to find your perfect roommate matches.</p>
+            <button class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200">
+              Get Notified When Ready
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
