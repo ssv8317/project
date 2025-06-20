@@ -43,7 +43,7 @@ export class DashboardComponent implements OnInit {
   zipForm: FormGroup;
   housingSearchForm: FormGroup;
   
-  // Tab management - updated to include matches
+  // Tab management - fixed type to include 'matches' instead of 'messages'
   public activeTab: 'home' | 'apartments' | 'saved' | 'matches' | 'profile' = 'home';
   public mobileMenuOpen = false;
   
