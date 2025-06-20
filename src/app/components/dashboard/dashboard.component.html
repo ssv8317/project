@@ -73,7 +73,7 @@
       <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg p-8 mb-8 text-white">
         <div class="flex flex-col lg:flex-row items-center justify-between">
           <div class="text-center lg:text-left mb-6 lg:mb-0">
-            <h1 class="text-3xl lg:text-4xl font-bold mb-2">Welcome back, {{ currentUser?.fullName?.split(' ')[0] || 'User' }}! 👋</h1>
+            <h1 class="text-3xl lg:text-4xl font-bold mb-2">Welcome back, {{ (currentUser?.fullName || '').split(' ')[0] || 'User' }}! 👋</h1>
             <p class="text-blue-100 text-lg mb-4">Ready to find your perfect home or roommate?</p>
             <div class="flex flex-wrap justify-center lg:justify-start gap-4">
               <button (click)="activeTab = 'properties'" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-2 px-6 rounded-lg transition-all backdrop-blur-sm font-medium">
