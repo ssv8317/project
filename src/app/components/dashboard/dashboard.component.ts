@@ -58,6 +58,7 @@ export class DashboardComponent implements OnInit {
   selectedProfile: MatchedProfile | null = null;
   newMessage = '';
   chatMessages: ChatMessage[] = [];
+  isTyping = false;
   
   // Legacy properties for roommate search
   matches: any[] = [];
@@ -231,6 +232,20 @@ export class DashboardComponent implements OnInit {
         text: 'Hey! Fellow software engineer here. I noticed we have similar budgets and both work in tech. Want to chat about potential apartments?',
         isOwn: false,
         timestamp: new Date(Date.now() - 7200000) // 2 hours ago
+      },
+      {
+        id: '4',
+        profileId: '2',
+        text: 'Absolutely! I\'ve been looking at some places in the tech district. Would love to share some listings with you.',
+        isOwn: true,
+        timestamp: new Date(Date.now() - 6900000) // 1 hour 55 minutes ago
+      },
+      {
+        id: '5',
+        profileId: '3',
+        text: 'Hi there! I see we\'re both looking for places near campus. I\'m a marketing specialist and love the social aspect of shared living!',
+        isOwn: false,
+        timestamp: new Date(Date.now() - 10800000) // 3 hours ago
       }
     ];
   }
@@ -267,14 +282,24 @@ export class DashboardComponent implements OnInit {
     this.chatMessages.push(message);
     this.newMessage = '';
 
+    // Show typing indicator
+    this.isTyping = true;
+
     // Simulate response after a delay
     setTimeout(() => {
+      this.isTyping = false;
+      
       const responses = [
         "That sounds great! I'd love to learn more.",
         "I'm definitely interested. When would be a good time to meet?",
         "Perfect! I was thinking the same thing.",
         "That apartment looks amazing! Should we schedule a viewing?",
-        "I agree! Let's definitely discuss this further."
+        "I agree! Let's definitely discuss this further.",
+        "Awesome! I think we'd make great roommates.",
+        "That's exactly what I was looking for too!",
+        "I love your enthusiasm! Let's make this happen.",
+        "Great idea! I'm excited to move forward with this.",
+        "That works perfectly for me. What's the next step?"
       ];
       
       const responseMessage: ChatMessage = {

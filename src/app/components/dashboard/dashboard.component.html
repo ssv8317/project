@@ -553,7 +553,7 @@
       </div>
     </div>
 
-    <!-- Matched Profiles Tab -->
+    <!-- Matched Profiles Tab with Enhanced Messaging -->
     <div *ngIf="activeTab === 'matches'">
       <div class="bg-white rounded-xl shadow-lg overflow-hidden">
         <div class="border-b border-gray-200 p-6">
@@ -561,7 +561,7 @@
           <p class="text-gray-600 mt-1">Connect with compatible roommates based on your preferences</p>
         </div>
         
-        <div class="grid grid-cols-1 lg:grid-cols-3 h-96">
+        <div class="grid grid-cols-1 lg:grid-cols-3 h-[600px]">
           <!-- Profile List -->
           <div class="lg:col-span-1 border-r border-gray-200 overflow-y-auto">
             <div class="p-4">
@@ -606,6 +606,13 @@
                       +{{ profile.sharedInterests.length - 2 }}
                     </span>
                   </div>
+                  
+                  <!-- Show last message preview if exists -->
+                  <div *ngIf="getChatMessages(profile.id).length > 0" class="mt-2 pt-2 border-t border-gray-100">
+                    <p class="text-xs text-gray-500 truncate">
+                      {{ getChatMessages(profile.id)[getChatMessages(profile.id).length - 1].text }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -624,40 +631,101 @@
             <div *ngIf="selectedProfile" class="flex-1 flex flex-col">
               <!-- Chat Header -->
               <div class="border-b border-gray-200 p-4 bg-white">
-                <div class="flex items-center space-x-3">
-                  <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
-                    {{ getInitials(selectedProfile.fullName) }}
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                      {{ getInitials(selectedProfile.fullName) }}
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-gray-900">{{ selectedProfile.fullName }}</h3>
+                      <p class="text-sm text-gray-600">{{ selectedProfile.matchPercentage }}% match • {{ selectedProfile.occupation }}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900">{{ selectedProfile.fullName }}</h3>
-                    <p class="text-sm text-gray-600">{{ selectedProfile.matchPercentage }}% match • {{ selectedProfile.occupation }}</p>
+                  <div class="flex items-center space-x-2">
+                    <button class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm hover:bg-blue-200 transition-colors">
+                      📞 Call
+                    </button>
+                    <button class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm hover:bg-green-200 transition-colors">
+                      📹 Video
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Profile Quick Info -->
+                <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                  <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span class="text-gray-600">Budget:</span>
+                      <span class="font-medium ml-1">{{ selectedProfile.budgetRange }}</span>
+                    </div>
+                    <div>
+                      <span class="text-gray-600">Location:</span>
+                      <span class="font-medium ml-1">{{ selectedProfile.locationPreference }}</span>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <span class="text-gray-600">Shared Interests:</span>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                      <span 
+                        *ngFor="let interest of selectedProfile.sharedInterests.slice(0, 4)" 
+                        class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs"
+                      >
+                        {{ interest }}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
               
               <!-- Chat Messages -->
-              <div class="flex-1 p-6 overflow-y-auto bg-gray-50">
-                <div class="space-y-4">
-                  <!-- Match notification -->
-                  <div class="text-center">
-                    <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm inline-block">
-                      You matched with {{ selectedProfile.fullName }}! Start the conversation.
-                    </div>
+              <div class="flex-1 p-6 overflow-y-auto bg-gray-50 space-y-4">
+                <!-- Match notification -->
+                <div class="text-center">
+                  <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm inline-block">
+                    🎉 You matched with {{ selectedProfile.fullName }}! Start the conversation.
                   </div>
-                  
-                  <!-- Chat messages -->
-                  <div *ngFor="let message of getChatMessages(selectedProfile.id)" class="flex" [class.justify-end]="message.isOwn">
+                </div>
+                
+                <!-- Chat messages -->
+                <div *ngFor="let message of getChatMessages(selectedProfile.id)" class="flex" [class.justify-end]="message.isOwn">
+                  <div class="flex items-end space-x-2 max-w-xs lg:max-w-md" [class.flex-row-reverse]="message.isOwn" [class.space-x-reverse]="message.isOwn">
+                    <div 
+                      *ngIf="!message.isOwn"
+                      class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                    >
+                      {{ getInitials(selectedProfile.fullName) }}
+                    </div>
                     <div 
                       [class.bg-blue-500]="message.isOwn"
                       [class.text-white]="message.isOwn"
                       [class.bg-white]="!message.isOwn"
                       [class.text-gray-900]="!message.isOwn"
-                      class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg shadow-sm"
+                      class="px-4 py-2 rounded-lg shadow-sm"
                     >
                       <p class="text-sm">{{ message.text }}</p>
                       <p class="text-xs mt-1 opacity-70">
                         {{ message.timestamp | date:'short' }}
                       </p>
+                    </div>
+                    <div 
+                      *ngIf="message.isOwn"
+                      class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                    >
+                      {{ getInitials(currentUser?.fullName) }}
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Typing indicator (optional) -->
+                <div *ngIf="isTyping" class="flex items-center space-x-2">
+                  <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                    {{ getInitials(selectedProfile.fullName) }}
+                  </div>
+                  <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
+                    <div class="flex space-x-1">
+                      <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                      <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
                     </div>
                   </div>
                 </div>
@@ -665,7 +733,12 @@
               
               <!-- Message Input -->
               <div class="border-t border-gray-200 p-4 bg-white">
-                <div class="flex space-x-4">
+                <div class="flex items-center space-x-4">
+                  <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                    </svg>
+                  </button>
                   <input 
                     type="text" 
                     [(ngModel)]="newMessage"
@@ -673,12 +746,19 @@
                     placeholder="Type your message..."
                     class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
+                  <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </button>
                   <button 
                     (click)="sendMessage()"
                     [disabled]="!newMessage.trim()"
                     class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Send
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
                   </button>
                 </div>
               </div>
