@@ -29,6 +29,10 @@
             👥 Matched Profiles
             <span class="bg-green-500 text-white text-xs rounded-full px-2 py-1 ml-1">{{ matchedProfiles.length }}</span>
           </button>
+          <button (click)="activeTab = 'messages'" [class.text-blue-600]="activeTab === 'messages'" [class.text-gray-700]="activeTab !== 'messages'" class="font-medium transition-colors hover:text-blue-600">
+            💬 Messages
+            <span class="bg-red-500 text-white text-xs rounded-full px-2 py-1 ml-1">3</span>
+          </button>
           <button (click)="activeTab = 'profile'" [class.text-blue-600]="activeTab === 'profile'" [class.text-gray-700]="activeTab !== 'profile'" class="font-medium transition-colors hover:text-blue-600">
             👤 Profile
           </button>
@@ -64,6 +68,7 @@
           <button (click)="activeTab = 'apartments'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">🏢 Find Apartments</button>
           <button (click)="activeTab = 'saved'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">❤️ Saved</button>
           <button (click)="activeTab = 'matches'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">👥 Matched Profiles</button>
+          <button (click)="activeTab = 'messages'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">💬 Messages</button>
           <button (click)="activeTab = 'profile'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">👤 Profile</button>
         </div>
       </div>
@@ -123,9 +128,9 @@
           <div class="text-sm text-gray-600">Matched Profiles</div>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
-          <div class="text-3xl mb-2">👁️</div>
-          <div class="text-2xl font-bold text-gray-900">24</div>
-          <div class="text-sm text-gray-600">Recent Views</div>
+          <div class="text-3xl mb-2">💬</div>
+          <div class="text-2xl font-bold text-gray-900">3</div>
+          <div class="text-sm text-gray-600">Active Chats</div>
         </div>
       </div>
 
@@ -153,6 +158,13 @@
               <div>
                 <div class="font-semibold">View Matched Profiles</div>
                 <div class="text-sm text-green-100">{{ matchedProfiles.length }} compatible matches</div>
+              </div>
+            </button>
+            <button (click)="activeTab = 'messages'" class="w-full bg-purple-500 text-white py-3 px-6 rounded-lg hover:bg-purple-600 transition-all font-medium text-left flex items-center">
+              <span class="mr-3">💬</span>
+              <div>
+                <div class="font-semibold">View Messages</div>
+                <div class="text-sm text-purple-100">3 active conversations</div>
               </div>
             </button>
           </div>
@@ -184,6 +196,18 @@
                 </div>
               </div>
               <div class="text-2xl font-bold text-green-600">{{ matchedProfiles.length }}</div>
+            </div>
+            <div class="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
+              <div class="flex items-center">
+                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                  <span class="text-purple-600">💬</span>
+                </div>
+                <div>
+                  <div class="font-semibold text-gray-900">Messages Sent</div>
+                  <div class="text-sm text-gray-600">This week</div>
+                </div>
+              </div>
+              <div class="text-2xl font-bold text-purple-600">15</div>
             </div>
           </div>
         </div>
@@ -761,6 +785,122 @@
                     </svg>
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages Tab -->
+    <div *ngIf="activeTab === 'messages'">
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="border-b border-gray-200 p-6">
+          <h2 class="text-2xl font-bold text-gray-900">💬 Messages</h2>
+          <p class="text-gray-600 mt-1">All your conversations in one place</p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 h-[600px]">
+          <!-- Conversation List -->
+          <div class="lg:col-span-1 border-r border-gray-200 overflow-y-auto">
+            <div class="p-4">
+              <div class="space-y-2">
+                <!-- Active conversations from matched profiles -->
+                <div 
+                  *ngFor="let profile of matchedProfiles.slice(0, 3)" 
+                  (click)="selectProfile(profile); activeTab = 'matches'"
+                  class="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-all border-l-4 border-transparent hover:border-blue-500"
+                >
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {{ getInitials(profile.fullName) }}
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-gray-900">{{ profile.fullName }}</h4>
+                        <p class="text-xs text-gray-500">{{ profile.occupation }}</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-xs text-gray-500">2 min ago</span>
+                      <div class="bg-red-500 text-white text-xs rounded-full px-2 py-1 mt-1">New</div>
+                    </div>
+                  </div>
+                  
+                  <p class="text-sm text-gray-600 truncate">
+                    {{ getChatMessages(profile.id).length > 0 ? getChatMessages(profile.id)[getChatMessages(profile.id).length - 1].text : 'Start a conversation...' }}
+                  </p>
+                </div>
+                
+                <!-- Sample landlord conversations -->
+                <div class="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-all">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                        JS
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-gray-900">John Smith (Landlord)</h4>
+                        <p class="text-xs text-gray-500">Downtown Apartment</p>
+                      </div>
+                    </div>
+                    <span class="text-xs text-gray-500">1 hour ago</span>
+                  </div>
+                  <p class="text-sm text-gray-600 truncate">The apartment is available for viewing this weekend...</p>
+                </div>
+                
+                <div class="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-all">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold">
+                        SJ
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-gray-900">Sarah Johnson (Landlord)</h4>
+                        <p class="text-xs text-gray-500">Campus Studio</p>
+                      </div>
+                    </div>
+                    <span class="text-xs text-gray-500">Yesterday</span>
+                  </div>
+                  <p class="text-sm text-gray-600 truncate">Thanks for your interest! The lease terms are flexible...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Chat Area -->
+          <div class="lg:col-span-2 flex flex-col">
+            <div class="flex-1 p-6 overflow-y-auto bg-gray-50">
+              <div class="text-center text-gray-500 py-8">
+                <div class="text-4xl mb-4">💬</div>
+                <p class="text-lg font-medium mb-2">Select a conversation to view messages</p>
+                <p class="text-sm">You have 3 active conversations</p>
+                <div class="mt-6">
+                  <button 
+                    (click)="activeTab = 'matches'"
+                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    👥 Chat with Matched Profiles
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Message Input (disabled when no conversation selected) -->
+            <div class="border-t border-gray-200 p-4 bg-white">
+              <div class="flex items-center space-x-4">
+                <input 
+                  type="text" 
+                  placeholder="Select a conversation to start messaging..."
+                  disabled
+                  class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
+                >
+                <button 
+                  disabled
+                  class="bg-gray-300 text-gray-500 px-6 py-2 rounded-lg cursor-not-allowed"
+                >
+                  Send
+                </button>
               </div>
             </div>
           </div>
