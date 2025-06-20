@@ -58,7 +58,7 @@ export class DashboardComponent implements OnInit {
   selectedProfile: MatchedProfile | null = null;
   newMessage = '';
   chatMessages: ChatMessage[] = [];
-  isTyping = false;
+  public isTyping = false;
   
   // Legacy properties for roommate search
   matches: any[] = [];
