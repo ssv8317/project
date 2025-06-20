@@ -19,6 +19,10 @@ export class DashboardComponent implements OnInit {
   zipForm: FormGroup;
   housingSearchForm: FormGroup;
   
+  // Tab management
+  activeTab: 'home' | 'properties' | 'messages' | 'profile' = 'home';
+  mobileMenuOpen = false;
+  
   // Housing search properties
   housingResults: HousingListing[] = [];
   featuredListings: HousingListing[] = [];
