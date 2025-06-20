@@ -31,6 +31,9 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
+// Define tab type separately for better type safety
+export type TabType = 'home' | 'apartments' | 'saved' | 'matches' | 'messages' | 'profile';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -43,8 +46,8 @@ export class DashboardComponent implements OnInit {
   zipForm: FormGroup;
   housingSearchForm: FormGroup;
   
-  // Tab management - updated to include messages
-  public activeTab: 'home' | 'apartments' | 'saved' | 'matches' | 'messages' | 'profile' = 'home';
+  // Tab management - updated to use the TabType
+  public activeTab: TabType = 'home';
   public mobileMenuOpen = false;
   
   // Housing search properties
