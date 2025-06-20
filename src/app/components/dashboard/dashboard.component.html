@@ -36,7 +36,6 @@
           <div class="flex items-center space-x-4 ml-8 border-l border-gray-200 pl-8">
             <div class="text-right">
               <p class="text-sm font-medium text-gray-900">{{ currentUser?.fullName || 'User' }}</p>
-              <p class="text-xs text-blue-600">Premium Member</p>
             </div>
             <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
               {{ getInitials(currentUser?.fullName) }}
@@ -88,60 +87,29 @@
           </svg>
         </div>
         
-        <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between">
-          <div class="text-center lg:text-left mb-6 lg:mb-0 lg:flex-1">
-            <div class="flex items-center justify-center lg:justify-start mb-4">
-              <div class="bg-white bg-opacity-20 rounded-full p-3 mr-4">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-              </div>
-              <h1 class="text-3xl lg:text-4xl font-bold">Welcome back, {{ (currentUser?.fullName || '').split(' ')[0] || 'User' }}! 👋</h1>
+        <div class="relative z-10 text-center">
+          <div class="flex items-center justify-center mb-4">
+            <div class="bg-white bg-opacity-20 rounded-full p-3 mr-4">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
             </div>
-            
-            <div class="space-y-3 mb-6">
-              <p class="text-blue-100 text-lg leading-relaxed">
-                🏠 <strong>HomeMate</strong> is your trusted companion for finding the perfect apartment and compatible roommates. 
-                We connect students and young professionals with verified housing options and like-minded individuals.
-              </p>
-              <p class="text-blue-100 text-base">
-                ✨ <strong>What makes us special:</strong> Smart matching algorithms, verified listings, secure messaging, 
-                and a community of 50,000+ trusted members across major cities.
-              </p>
-              <p class="text-blue-100 text-base">
-                🎯 <strong>Your journey:</strong> Browse {{ featuredListings.length + 15 }} available apartments, 
-                connect with verified landlords, and find your ideal living situation today!
-              </p>
-            </div>
-            
-            <div class="flex flex-wrap justify-center lg:justify-start gap-4">
-              <button (click)="activeTab = 'apartments'" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 px-6 rounded-lg transition-all backdrop-blur-sm font-medium flex items-center space-x-2 shadow-lg">
-                <span>🔍</span>
-                <span>Search Apartments</span>
-              </button>
-              <button (click)="activeTab = 'saved'" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 px-6 rounded-lg transition-all backdrop-blur-sm font-medium flex items-center space-x-2 shadow-lg">
-                <span>❤️</span>
-                <span>View Saved (12)</span>
-              </button>
-              <button (click)="activeTab = 'messages'" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 px-6 rounded-lg transition-all backdrop-blur-sm font-medium flex items-center space-x-2 shadow-lg">
-                <span>💬</span>
-                <span>Messages (3)</span>
-              </button>
-            </div>
+            <h1 class="text-3xl lg:text-4xl font-bold">Welcome back, {{ (currentUser?.fullName || '').split(' ')[0] || 'User' }}! 👋</h1>
           </div>
           
-          <div class="text-center lg:ml-8">
-            <div class="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-lg backdrop-blur-sm">
-              {{ getInitials(currentUser?.fullName) }}
-            </div>
-            <div class="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-              <p class="text-blue-100 text-sm font-medium">Premium Member</p>
-              <p class="text-white text-lg font-bold">Since {{ (currentUser?.createdAt | date:'MMM yyyy') || 'Jan 2024' }}</p>
-              <div class="flex items-center justify-center mt-2">
-                <span class="text-yellow-300 mr-1">⭐</span>
-                <span class="text-white text-sm">4.9 Profile Rating</span>
-              </div>
-            </div>
+          <div class="space-y-3 mb-6 max-w-4xl mx-auto">
+            <p class="text-blue-100 text-lg leading-relaxed">
+              🏠 <strong>HomeMate</strong> is your trusted companion for finding the perfect apartment and compatible roommates. 
+              We connect students and young professionals with verified housing options and like-minded individuals.
+            </p>
+            <p class="text-blue-100 text-base">
+              ✨ <strong>What makes us special:</strong> Smart matching algorithms, verified listings, secure messaging, 
+              and a community of 50,000+ trusted members across major cities.
+            </p>
+            <p class="text-blue-100 text-base">
+              🎯 <strong>Your journey:</strong> Browse {{ featuredListings.length + 15 }} available apartments, 
+              connect with verified landlords, and find your ideal living situation today!
+            </p>
           </div>
         </div>
         
