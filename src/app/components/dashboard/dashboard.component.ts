@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { MatchService } from '../../services/match.service'; // Add this import
-import { User, RoommateMatch } from '../../models/user.model'; // Add RoommateMatch import
+import { HousingService } from '../../services/housing.service';
+import { User } from '../../models/user.model';
+import { HousingListing, SearchFilters } from '../../models/housing.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +17,16 @@ import { User, RoommateMatch } from '../../models/user.model'; // Add RoommateMa
 export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
   zipForm: FormGroup;
-  matches: RoommateMatch[] = []; // Add this property
+  housingSearchForm: FormGroup;
+  
+  // Housing search properties
+  housingResults: HousingListing[] = [];
+  featuredListings: HousingListing[] = [];
+  isSearchingHousing = false;
+  hasSearchedHousing = false;
+  
+  // Legacy properties for roommate search
+  matches: any[] = [];
   isSearching = false;
   hasSearched = false;
   errorMessage = '';
@@ -24,16 +34,29 @@ export class DashboardComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private matchService: MatchService, // Add this injection
+    private housingService: HousingService,
     private router: Router
   ) {
+    // Legacy roommate search form
     this.zipForm = this.fb.group({
       zipCode: ['', [Validators.required, Validators.pattern(/^\d{5}$/)]]
+    });
+
+    // New housing search form
+    this.housingSearchForm = this.fb.group({
+      zipCode: ['', [Validators.pattern(/^\d{5}$/)]],
+      maxPrice: [''],
+      bedrooms: [''],
+      petFriendly: [false],
+      furnished: [false],
+      parking: [false],
+      gym: [false]
     });
   }
 
   ngOnInit(): void {
     this.loadCurrentUser();
+    this.loadFeaturedListings();
   }
 
   private loadCurrentUser(): void {
@@ -77,6 +100,17 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  private loadFeaturedListings(): void {
+    this.housingService.getFeaturedListings().subscribe({
+      next: (listings) => {
+        this.featuredListings = listings;
+      },
+      error: (error) => {
+        console.error('Error loading featured listings:', error);
+      }
+    });
+  }
+
   getInitials(fullName?: string): string {
     if (!fullName) return 'U';
     return fullName.split(' ')
@@ -86,6 +120,71 @@ export class DashboardComponent implements OnInit {
       .slice(0, 2);
   }
 
+  // Housing search methods
+  searchHousing(): void {
+    this.isSearchingHousing = true;
+    this.hasSearchedHousing = true;
+
+    const formValue = this.housingSearchForm.value;
+    const filters: Partial<SearchFilters> = {
+      zipCode: formValue.zipCode,
+      maxPrice: formValue.maxPrice ? parseInt(formValue.maxPrice) : undefined,
+      bedrooms: formValue.bedrooms ? [parseInt(formValue.bedrooms)] : undefined,
+      petFriendly: formValue.petFriendly || undefined,
+      furnished: formValue.furnished || undefined,
+      amenities: [],
+      sortBy: 'date',
+      sortOrder: 'desc'
+    };
+
+    // Add amenities based on checkboxes
+    if (formValue.parking) filters.amenities?.push('Parking');
+    if (formValue.gym) filters.amenities?.push('Gym');
+
+    this.housingService.searchHousing(filters).subscribe({
+      next: (results) => {
+        this.housingResults = results;
+        this.isSearchingHousing = false;
+      },
+      error: (error) => {
+        console.error('Housing search error:', error);
+        this.isSearchingHousing = false;
+      }
+    });
+  }
+
+  onSortChange(event: any): void {
+    const [sortBy, sortOrder] = event.target.value.split('-');
+    const currentFilters = this.getCurrentHousingFilters();
+    currentFilters.sortBy = sortBy as any;
+    currentFilters.sortOrder = sortOrder as any;
+
+    this.housingService.searchHousing(currentFilters).subscribe({
+      next: (results) => {
+        this.housingResults = results;
+      }
+    });
+  }
+
+  clearHousingFilters(): void {
+    this.housingSearchForm.reset();
+    this.housingResults = [];
+    this.hasSearchedHousing = false;
+  }
+
+  private getCurrentHousingFilters(): Partial<SearchFilters> {
+    const formValue = this.housingSearchForm.value;
+    return {
+      zipCode: formValue.zipCode,
+      maxPrice: formValue.maxPrice ? parseInt(formValue.maxPrice) : undefined,
+      bedrooms: formValue.bedrooms ? [parseInt(formValue.bedrooms)] : undefined,
+      petFriendly: formValue.petFriendly || undefined,
+      furnished: formValue.furnished || undefined,
+      amenities: []
+    };
+  }
+
+  // Legacy roommate search methods (keeping for backward compatibility)
   searchRoommates(): void {
     if (this.zipForm.valid) {
       this.isSearching = true;
@@ -95,25 +194,12 @@ export class DashboardComponent implements OnInit {
       const zipCode = this.zipForm.get('zipCode')?.value;
       console.log('Searching for roommates in ZIP:', zipCode);
       
-      // Use MatchService instead of setTimeout
-      this.matchService.findMatches(zipCode).subscribe({
-        next: (matches) => {
-          this.matches = matches;
-          this.isSearching = false;
-          if (matches.length === 0) {
-            this.errorMessage = 'Backend endpoints not implemented yet. Will show real matches once we add backend integration.';
-          }
-          console.log('Search completed, matches found:', matches.length);
-        },
-        error: (error) => {
-          console.error('Search error:', error);
-          this.errorMessage = 'Search service error. Backend endpoints needed.';
-          this.isSearching = false;
-          this.matches = [];
-        }
-      });
-    } else {
-      console.log('Form invalid:', this.zipForm.errors);
+      // Simulate search
+      setTimeout(() => {
+        this.matches = [];
+        this.isSearching = false;
+        this.errorMessage = 'Roommate search functionality will be added in future updates.';
+      }, 1000);
     }
   }
 
