@@ -166,7 +166,7 @@ import { HousingListing, SearchFilters } from '../../models/housing.model';
               >
               <div class="absolute top-4 left-4">
                 <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  ${{ listing.price }}/month
+                  {{ listing.price }}/month
                 </span>
               </div>
               <div class="absolute top-4 right-4" *ngIf="listing.featured">
@@ -259,7 +259,7 @@ import { HousingListing, SearchFilters } from '../../models/housing.model';
               >
               <div class="absolute top-4 left-4">
                 <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  ${{ listing.price }}/month
+                  {{ listing.price }}/month
                 </span>
               </div>
               <div class="absolute top-4 right-4">
