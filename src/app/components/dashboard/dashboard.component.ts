@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
   housingSearchForm: FormGroup;
   
   // Tab management - explicitly declare as public
-  public activeTab: 'home' | 'properties' | 'messages' | 'profile' = 'home';
+  public activeTab: 'home' | 'apartments' | 'saved' | 'messages' | 'profile' = 'home';
   public mobileMenuOpen = false;
   
   // Housing search properties
