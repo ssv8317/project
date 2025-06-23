@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
   currentMessages: ChatMessage[] = [];
   newMessage: string = '';
   searchQuery: string = '';
-  unreadCount = 0;
+  unreadCount: number = 0;
   isTyping: boolean = false;
   typingTimeout: any;
 
