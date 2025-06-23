@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
   currentMessages: ChatMessage[] = [];
   newMessage: string = '';
   searchQuery: string = '';
-  unreadCount: number = 0;
+  unreadCount = 0;
   isTyping: boolean = false;
   typingTimeout: any;
 
@@ -92,9 +92,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    setTimeout(() => {
-      this.checkScreenSize();
-    }, 0);
+    this.checkScreenSize();
   }
 
   private checkScreenSize() {
