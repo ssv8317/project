@@ -84,7 +84,7 @@ export class DashboardComponent implements OnInit {
     console.log('🚀 Dashboard component initializing...');
     this.loadCurrentUser();
     this.loadFeaturedListings();
-    this.loadPotentialMatches();
+    // Don't load potential matches here - wait for user to be loaded
   }
 
   loadCurrentUser(): void {
@@ -93,7 +93,11 @@ export class DashboardComponent implements OnInit {
         if (user) {
           console.log('👤 Current user loaded:', user);
           this.currentUser = user;
+          // Load matches AFTER user is loaded
           this.loadUserMatches();
+          this.loadPotentialMatches();
+        } else {
+          console.log('❌ No current user found');
         }
       },
       error: (error: any) => {
@@ -276,11 +280,18 @@ export class DashboardComponent implements OnInit {
         next: (matches: MatchResponse[]) => {
           console.log('✅ User matches loaded:', matches);
           this.userMatches = matches;
+          // Also update matchedProfiles for template compatibility
+          this.matchedProfiles = matches.map(match => ({
+            ...match.profile,
+            matchPercentage: match.compatibilityScore
+          }));
         },
         error: (error: any) => {
           console.error('❌ Error loading matches:', error);
         }
       });
+    } else {
+      console.log('❌ Cannot load matches - no current user ID');
     }
   }
 
@@ -318,5 +329,16 @@ export class DashboardComponent implements OnInit {
       isOwn: true
     });
     this.newMessage = '';
+  }
+
+  // Add method to switch tabs and trigger data loading
+  setActiveTab(tab: TabType): void {
+    console.log('📱 Switching to tab:', tab);
+    this.activeTab = tab;
+    
+    // Load data when switching to specific tabs
+    if (tab === 'matches' && this.currentUser?.id) {
+      this.loadUserMatches();
+    }
   }
 }

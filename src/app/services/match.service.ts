@@ -12,30 +12,8 @@ export class MatchService {
   // Mock data for demo
   private mockProfiles: RoommateProfile[] = [
     {
-      id: '1',
-      userId: '2',
-      displayName: 'Alex Johnson',
-      age: 24,
-      gender: 'Male',
-      occupation: 'Data Scientist',
-      bio: 'Love hiking, cooking, and board games. Looking for a clean, respectful roommate.',
-      profilePictures: ['https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg'],
-      budgetMin: 1000,
-      budgetMax: 1500,
-      preferredLocations: ['Downtown', 'Midtown'],
-      cleanliness: 4,
-      socialLevel: 3,
-      noiseLevel: 2,
-      smokingOk: false,
-      petsOk: true,
-      interests: ['Hiking', 'Cooking', 'Board Games', 'Tech'],
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
       id: '2',
-      userId: '3',
+      userId: '2',
       displayName: 'Sarah Chen',
       age: 22,
       gender: 'Female',
@@ -78,6 +56,28 @@ export class MatchService {
       updatedAt: new Date().toISOString()
     },
     {
+      id: '1',
+      userId: '3',
+      displayName: 'Alex Johnson',
+      age: 24,
+      gender: 'Male',
+      occupation: 'Data Scientist',
+      bio: 'Love hiking, cooking, and board games. Looking for a clean, respectful roommate.',
+      profilePictures: ['https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg'],
+      budgetMin: 1000,
+      budgetMax: 1500,
+      preferredLocations: ['Downtown', 'Midtown'],
+      cleanliness: 4,
+      socialLevel: 3,
+      noiseLevel: 2,
+      smokingOk: false,
+      petsOk: true,
+      interests: ['Hiking', 'Cooking', 'Board Games', 'Tech'],
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
       id: '4',
       userId: '5',
       displayName: 'Emma Wilson',
@@ -103,13 +103,15 @@ export class MatchService {
 
   private swipeHistory: { [userId: string]: string[] } = {};
   
-  // Pre-populate matches for John Doe (user ID '1')
+  // Pre-populate matches for John Doe (user ID '1') - FIXED IDs
   private matches: { [userId: string]: string[] } = {
-    '1': ['2', '3'] // John is matched with Sarah Chen and Mike Rodriguez
+    '1': ['2', '3'] // John is matched with Sarah Chen (ID '2') and Mike Rodriguez (ID '3')
   };
 
   constructor(private http: HttpClient) {
-    console.log('🎯 MatchService initialized with pre-existing matches:', this.matches);
+    console.log('🎯 MatchService initialized');
+    console.log('📊 Pre-existing matches:', this.matches);
+    console.log('👥 Available profiles:', this.mockProfiles.map(p => ({ id: p.id, name: p.displayName })));
   }
 
   getPotentialMatches(userId: string): Observable<MatchResponse[]> {
@@ -122,10 +124,14 @@ export class MatchService {
         const matchedProfiles = this.matches[userId] || [];
         const excludedProfiles = [...swipedProfiles, ...matchedProfiles];
         
+        console.log('🚫 Excluded profiles:', excludedProfiles);
+        
         const availableProfiles = this.mockProfiles.filter(p => 
           p.userId !== userId && 
           !excludedProfiles.includes(p.id)
         );
+
+        console.log('✅ Available profiles for matching:', availableProfiles.map(p => ({ id: p.id, name: p.displayName })));
 
         // Convert to MatchResponse format with mock compatibility scores
         const matchResponses: MatchResponse[] = availableProfiles.map(profile => ({
@@ -168,7 +174,7 @@ export class MatchService {
             this.matches[userId] = [];
           }
           this.matches[userId].push(request.profileId);
-          console.log('🎉 New match created!');
+          console.log('🎉 New match created! Updated matches:', this.matches);
         }
 
         const response: MatchResponse = {
@@ -191,10 +197,15 @@ export class MatchService {
     return new Observable(observer => {
       setTimeout(() => {
         const userMatches = this.matches[userId] || [];
-        console.log(`👤 User ${userId} has matches:`, userMatches);
+        console.log(`👤 User ${userId} has match IDs:`, userMatches);
         
-        const matchedProfiles = this.mockProfiles.filter(p => userMatches.includes(p.id));
-        console.log('🔍 Found matched profiles:', matchedProfiles);
+        const matchedProfiles = this.mockProfiles.filter(p => {
+          const isMatch = userMatches.includes(p.id);
+          console.log(`🔍 Profile ${p.id} (${p.displayName}): ${isMatch ? 'MATCH' : 'no match'}`);
+          return isMatch;
+        });
+        
+        console.log('🔍 Found matched profiles:', matchedProfiles.map(p => ({ id: p.id, name: p.displayName })));
         
         const matchResponses: MatchResponse[] = matchedProfiles.map(profile => ({
           id: profile.id,
@@ -203,7 +214,7 @@ export class MatchService {
           isNewMatch: false
         }));
 
-        console.log(`✅ Returning ${matchResponses.length} matches for user ${userId}`);
+        console.log(`✅ Returning ${matchResponses.length} matches for user ${userId}:`, matchResponses.map(m => m.profile.displayName));
         observer.next(matchResponses);
         observer.complete();
       }, 800);
