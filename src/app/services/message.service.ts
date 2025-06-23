@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError } from 'rxjs';
+import { MockMessageService } from './mock-message.service';
 
 export interface ChatMessage {
   id: string;
@@ -25,23 +26,81 @@ export interface Conversation {
   providedIn: 'root'
 })
 export class MessageService {
-  private apiUrl = 'https://localhost:56636/api'; // ← Fix this URL
+  private apiUrl = '/api';
+  private useMockService = true; // Toggle this to switch between mock and real API
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private mockMessageService: MockMessageService
+  ) {}
 
   getConversations(userId: string): Observable<Conversation[]> {
-    return this.http.get<Conversation[]>(`${this.apiUrl}/messages/conversations/${userId}`);
+    if (this.useMockService) {
+      console.log('🔄 Using mock message service for conversations');
+      return this.mockMessageService.getConversations(userId);
+    }
+
+    return this.http.get<Conversation[]>(`${this.apiUrl}/messages/conversations/${userId}`)
+      .pipe(
+        catchError(error => {
+          console.log('❌ Real API failed, falling back to mock service');
+          this.useMockService = true;
+          return this.mockMessageService.getConversations(userId);
+        })
+      );
   }
 
   getMessages(conversationId: string): Observable<ChatMessage[]> {
-    return this.http.get<ChatMessage[]>(`${this.apiUrl}/messages/${conversationId}`);
+    if (this.useMockService) {
+      console.log('🔄 Using mock message service for messages');
+      return this.mockMessageService.getMessages(conversationId);
+    }
+
+    return this.http.get<ChatMessage[]>(`${this.apiUrl}/messages/${conversationId}`)
+      .pipe(
+        catchError(error => {
+          console.log('❌ Real API failed, falling back to mock service');
+          this.useMockService = true;
+          return this.mockMessageService.getMessages(conversationId);
+        })
+      );
   }
 
   sendMessage(message: Partial<ChatMessage>): Observable<ChatMessage> {
-    return this.http.post<ChatMessage>(`${this.apiUrl}/messages`, message);
+    if (this.useMockService) {
+      console.log('🔄 Using mock message service for send message');
+      return this.mockMessageService.sendMessage(message);
+    }
+
+    return this.http.post<ChatMessage>(`${this.apiUrl}/messages`, message)
+      .pipe(
+        catchError(error => {
+          console.log('❌ Real API failed, falling back to mock service');
+          this.useMockService = true;
+          return this.mockMessageService.sendMessage(message);
+        })
+      );
   }
 
   markAsRead(messageId: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/messages/${messageId}/read`, {});
+    if (this.useMockService) {
+      console.log('🔄 Using mock message service for mark as read');
+      return this.mockMessageService.markAsRead(messageId);
+    }
+
+    return this.http.put<void>(`${this.apiUrl}/messages/${messageId}/read`, {})
+      .pipe(
+        catchError(error => {
+          console.log('❌ Real API failed, falling back to mock service');
+          this.useMockService = true;
+          return this.mockMessageService.markAsRead(messageId);
+        })
+      );
+  }
+
+  // Method to toggle between mock and real API (for testing)
+  setUseMockService(useMock: boolean): void {
+    this.useMockService = useMock;
+    console.log(`🔄 Switched to ${useMock ? 'mock' : 'real'} message API service`);
   }
 }

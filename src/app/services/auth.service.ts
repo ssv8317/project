@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, of } from 'rxjs';
+import { BehaviorSubject, Observable, tap, of, catchError } from 'rxjs';
 import { User, LoginRequest, RegisterRequest, AuthResponse } from '../models/user.model';
+import { MockAuthService } from './mock-auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = '/api/auth'; // Use proxy instead of direct URL
+  private baseUrl = '/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private useMockService = true; // Toggle this to switch between mock and real API
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private mockAuthService: MockAuthService
+  ) {
     this.loadUserFromStorage();
   }
 
@@ -30,7 +35,12 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    console.log('🔐 Attempting login with:', { email: credentials.email });
+    if (this.useMockService) {
+      console.log('🔄 Using mock auth service for login');
+      return this.mockAuthService.login(credentials);
+    }
+
+    console.log('🔐 Attempting real API login with:', { email: credentials.email });
     
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials)
       .pipe(
@@ -42,12 +52,22 @@ export class AuthService {
           }
           localStorage.setItem('user', JSON.stringify(response.user));
           this.currentUserSubject.next(response.user);
+        }),
+        catchError(error => {
+          console.log('❌ Real API failed, falling back to mock service');
+          this.useMockService = true;
+          return this.mockAuthService.login(credentials);
         })
       );
   }
 
   register(userData: RegisterRequest): Observable<{ user: User }> {
-    console.log('📝 Attempting registration for:', userData.email);
+    if (this.useMockService) {
+      console.log('🔄 Using mock auth service for registration');
+      return this.mockAuthService.register(userData);
+    }
+
+    console.log('📝 Attempting real API registration for:', userData.email);
     
     interface RegisterResponse {
       user: User;
@@ -59,6 +79,11 @@ export class AuthService {
           console.log('✅ Registration successful:', response);
           localStorage.setItem('user', JSON.stringify(response.user));
           this.currentUserSubject.next(response.user);
+        }),
+        catchError(error => {
+          console.log('❌ Real API failed, falling back to mock service');
+          this.useMockService = true;
+          return this.mockAuthService.register(userData);
         })
       );
   }
@@ -103,5 +128,11 @@ export class AuthService {
   getCurrentUserSync(): User | null {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
+  }
+
+  // Method to toggle between mock and real API (for testing)
+  setUseMockService(useMock: boolean): void {
+    this.useMockService = useMock;
+    console.log(`🔄 Switched to ${useMock ? 'mock' : 'real'} API service`);
   }
 }
