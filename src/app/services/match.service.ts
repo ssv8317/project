@@ -80,7 +80,11 @@ export class MatchService {
   ];
 
   private swipeHistory: { [userId: string]: string[] } = {};
-  private matches: { [userId: string]: string[] } = {};
+  
+  // Pre-populate some matches for demo - John (user ID '1') already has matches
+  private matches: { [userId: string]: string[] } = {
+    '1': ['2', '3'] // John is matched with Sarah and Mike
+  };
 
   constructor(private http: HttpClient) {}
 
@@ -91,8 +95,11 @@ export class MatchService {
       setTimeout(() => {
         // Filter out profiles the user has already swiped on
         const swipedProfiles = this.swipeHistory[userId] || [];
+        const matchedProfiles = this.matches[userId] || [];
         const availableProfiles = this.mockProfiles.filter(p => 
-          p.userId !== userId && !swipedProfiles.includes(p.id)
+          p.userId !== userId && 
+          !swipedProfiles.includes(p.id) && 
+          !matchedProfiles.includes(p.id)
         );
 
         // Convert to MatchResponse format with mock compatibility scores
@@ -128,8 +135,8 @@ export class MatchService {
           return;
         }
 
-        // Simulate match (30% chance if it's a like)
-        const isNewMatch = request.action === UserAction.Like && Math.random() < 0.3;
+        // Simulate match (50% chance if it's a like for better demo)
+        const isNewMatch = request.action === UserAction.Like && Math.random() < 0.5;
         
         if (isNewMatch) {
           if (!this.matches[userId]) {
