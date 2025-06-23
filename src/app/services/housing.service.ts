@@ -7,7 +7,7 @@ import { HousingListing } from '../models/housing.model';
   providedIn: 'root'
 })
 export class HousingService {
-  private apiUrl = 'https://localhost:56636/api'; // ← Fix this URL
+  private apiUrl = '/api'; // Use proxy instead of direct URL
 
   constructor(private http: HttpClient) {}
 
@@ -16,13 +16,12 @@ export class HousingService {
   }
 
   searchHousing(filters: any): Observable<HousingListing[]> {
-    // Fix the bedrooms.join error
     const searchParams = new HttpParams({
       fromObject: {
         zipCode: filters.zipCode || '',
         minPrice: filters.minPrice || '',
         maxPrice: filters.maxPrice || '',
-        bedrooms: filters.bedrooms || '', // Don't call .join() here
+        bedrooms: filters.bedrooms || '',
         bathrooms: filters.bathrooms || '',
         petFriendly: filters.petFriendly ? 'true' : 'false',
         furnished: filters.furnished ? 'true' : 'false',

@@ -7,7 +7,7 @@ import { User, LoginRequest, RegisterRequest, AuthResponse } from '../models/use
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'https://localhost:56636/api/auth'; // ← Change this line
+  private baseUrl = '/api/auth'; // Use proxy instead of direct URL
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -23,17 +23,23 @@ export class AuthService {
       try {
         this.currentUserSubject.next(JSON.parse(user));
       } catch (error) {
+        console.error('Error parsing stored user data:', error);
         this.logout();
       }
     }
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
+    console.log('🔐 Attempting login with:', { email: credentials.email });
+    
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials)
       .pipe(
         tap(response => {
-          // Store in localStorage
-          localStorage.setItem('token', response.token!);
+          console.log('✅ Login successful:', response);
+          
+          if (response.token) {
+            localStorage.setItem('token', response.token);
+          }
           localStorage.setItem('user', JSON.stringify(response.user));
           this.currentUserSubject.next(response.user);
         })
@@ -41,6 +47,8 @@ export class AuthService {
   }
 
   register(userData: RegisterRequest): Observable<{ user: User }> {
+    console.log('📝 Attempting registration for:', userData.email);
+    
     interface RegisterResponse {
       user: User;
     }
@@ -48,8 +56,7 @@ export class AuthService {
     return this.http.post<RegisterResponse>(`${this.baseUrl}/register`, userData)
       .pipe(
         tap((response: RegisterResponse) => {
-          // Remove or comment out the line below, since token is not returned
-          // localStorage.setItem('token', response.token);
+          console.log('✅ Registration successful:', response);
           localStorage.setItem('user', JSON.stringify(response.user));
           this.currentUserSubject.next(response.user);
         })
@@ -57,8 +64,9 @@ export class AuthService {
   }
 
   logout(): void {
-    // Clear token from localStorage
+    console.log('🚪 Logging out user');
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.currentUserSubject.next(null);
   }
 
@@ -68,30 +76,30 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     const token = this.getToken();
-    return !!token; // In a real app, you'd also check if token is expired
+    return !!token;
   }
 
   isLoggedIn(): boolean {
     const token = localStorage.getItem('token');
-    return !!token; // Returns true if token exists, false if not
+    const user = localStorage.getItem('user');
+    return !!(token && user);
   }
 
-  // Updated method to return Observable for dashboard compatibility
   getCurrentUser(): Observable<User | null> {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
-        return of(user); // Return as Observable
+        return of(user);
       } catch (error) {
         console.error('Error parsing user data:', error);
+        this.logout();
         return of(null);
       }
     }
     return of(null);
   }
 
-  // Keep the synchronous version for backward compatibility
   getCurrentUserSync(): User | null {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
