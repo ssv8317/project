@@ -46,11 +46,15 @@ export class DashboardComponent implements OnInit {
   showMatchModal = false;
   newMatch: MatchResponse | null = null;
 
+  // Messages
   conversations: Conversation[] = [];
   messages: ChatMessage[] = [];
   newMessage: string = '';
+  selectedConversation: Conversation | null = null;
   selectedProfile: any;
   chatMessages: { [profileId: string]: any[] } = {};
+  isLoadingConversations = false;
+  isLoadingMessages = false;
 
   // Add this property to your component class
   matchedProfiles: any[] = [];
@@ -85,6 +89,7 @@ export class DashboardComponent implements OnInit {
     this.loadCurrentUser();
     this.loadFeaturedListings();
     this.loadPotentialMatches();
+    this.loadConversations();
   }
 
   loadCurrentUser(): void {
@@ -94,6 +99,7 @@ export class DashboardComponent implements OnInit {
           console.log('👤 Current user loaded:', user);
           this.currentUser = user;
           this.loadUserMatches();
+          this.loadConversations();
         }
       },
       error: (error: any) => {
@@ -284,10 +290,114 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // --- END MATCHING SYSTEM METHODS ---
+  // --- MESSAGING METHODS ---
 
-  // Messaging and other methods remain unchanged...
-  // (You can keep your getChatMessages, sendMessage, getInitials, saveProfile, resetProfile, etc.)
+  loadConversations(): void {
+    if (this.currentUser?.id) {
+      console.log('💬 Loading conversations for user:', this.currentUser.id);
+      this.isLoadingConversations = true;
+      this.messageService.getConversations(this.currentUser.id).subscribe({
+        next: (conversations: Conversation[]) => {
+          console.log('✅ Conversations loaded:', conversations);
+          this.conversations = conversations;
+          this.isLoadingConversations = false;
+        },
+        error: (error: any) => {
+          console.error('❌ Error loading conversations:', error);
+          this.isLoadingConversations = false;
+        }
+      });
+    }
+  }
+
+  selectConversation(conversation: Conversation): void {
+    console.log('💬 Selecting conversation:', conversation);
+    this.selectedConversation = conversation;
+    this.loadMessages(conversation.id);
+  }
+
+  loadMessages(conversationId: string): void {
+    console.log('📨 Loading messages for conversation:', conversationId);
+    this.isLoadingMessages = true;
+    this.messageService.getMessages(conversationId).subscribe({
+      next: (messages: ChatMessage[]) => {
+        console.log('✅ Messages loaded:', messages);
+        this.messages = messages.map(msg => ({
+          ...msg,
+          isOwn: msg.senderId === this.currentUser?.id
+        }));
+        this.isLoadingMessages = false;
+      },
+      error: (error: any) => {
+        console.error('❌ Error loading messages:', error);
+        this.isLoadingMessages = false;
+      }
+    });
+  }
+
+  sendMessage(): void {
+    if (!this.newMessage.trim() || !this.selectedConversation || !this.currentUser?.id) {
+      return;
+    }
+
+    const otherParticipant = this.selectedConversation.participants.find(p => p !== this.currentUser!.id);
+    if (!otherParticipant) return;
+
+    const messageData: Partial<ChatMessage> = {
+      conversationId: this.selectedConversation.id,
+      senderId: this.currentUser.id,
+      receiverId: otherParticipant,
+      content: this.newMessage.trim()
+    };
+
+    console.log('📤 Sending message:', messageData);
+
+    this.messageService.sendMessage(messageData).subscribe({
+      next: (sentMessage: ChatMessage) => {
+        console.log('✅ Message sent:', sentMessage);
+        this.messages.push({
+          ...sentMessage,
+          isOwn: true
+        });
+        this.newMessage = '';
+        
+        // Update conversation's last message
+        if (this.selectedConversation) {
+          this.selectedConversation.lastMessage = sentMessage;
+          this.selectedConversation.lastMessageTime = sentMessage.timestamp;
+        }
+      },
+      error: (error: any) => {
+        console.error('❌ Error sending message:', error);
+      }
+    });
+  }
+
+  getOtherParticipantName(conversation: Conversation): string {
+    if (!this.currentUser?.id) return 'Unknown';
+    
+    const otherParticipantId = conversation.participants.find(p => p !== this.currentUser!.id);
+    if (!otherParticipantId) return 'Unknown';
+    
+    return conversation.participantNames[otherParticipantId] || 'Unknown User';
+  }
+
+  formatMessageTime(timestamp: Date): string {
+    const now = new Date();
+    const messageTime = new Date(timestamp);
+    const diffInHours = (now.getTime() - messageTime.getTime()) / (1000 * 60 * 60);
+    
+    if (diffInHours < 1) {
+      return 'Just now';
+    } else if (diffInHours < 24) {
+      return `${Math.floor(diffInHours)}h ago`;
+    } else {
+      return messageTime.toLocaleDateString();
+    }
+  }
+
+  // --- END MESSAGING METHODS ---
+
   getInitials(name: string | undefined | null): string {
     if (!name) return '';
     const parts = name.trim().split(' ');
@@ -302,21 +412,5 @@ export class DashboardComponent implements OnInit {
 
   getChatMessages(profileId: string): Array<{ content: string, isOwn: boolean, timestamp: Date }> {
     return this.chatMessages[profileId] || [];
-  }
-
-  sendMessage() {
-    if (!this.newMessage.trim() || !this.selectedProfile) {
-      return;
-    }
-    const profileId = this.selectedProfile.id;
-    if (!this.chatMessages[profileId]) {
-      this.chatMessages[profileId] = [];
-    }
-    this.chatMessages[profileId].push({
-      content: this.newMessage,
-      timestamp: new Date(),
-      isOwn: true
-    });
-    this.newMessage = '';
   }
 }

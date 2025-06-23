@@ -16,6 +16,7 @@ export interface ChatMessage {
 export interface Conversation {
   id: string;
   participants: string[];
+  participantNames: { [userId: string]: string };
   lastMessage?: ChatMessage;
   lastMessageTime: Date;
   unreadCount: number;
@@ -27,15 +28,16 @@ export interface Conversation {
 export class MessageService {
   private apiUrl = '/api';
 
-  // Mock data for demo
+  // Mock data for demo - conversations for John Doe (user ID '1')
   private mockConversations: Conversation[] = [
     {
       id: '1',
       participants: ['1', '2'],
+      participantNames: { '1': 'John Doe', '2': 'Sarah Chen' },
       lastMessageTime: new Date(),
       unreadCount: 2,
       lastMessage: {
-        id: '1',
+        id: '3',
         conversationId: '1',
         senderId: '2',
         receiverId: '1',
@@ -47,10 +49,11 @@ export class MessageService {
     {
       id: '2',
       participants: ['1', '3'],
+      participantNames: { '1': 'John Doe', '3': 'Mike Rodriguez' },
       lastMessageTime: new Date(Date.now() - 3600000), // 1 hour ago
       unreadCount: 0,
       lastMessage: {
-        id: '2',
+        id: '5',
         conversationId: '2',
         senderId: '1',
         receiverId: '3',
@@ -90,6 +93,26 @@ export class MessageService {
         timestamp: new Date(),
         isRead: false
       }
+    ],
+    '2': [
+      {
+        id: '4',
+        conversationId: '2',
+        senderId: '3',
+        receiverId: '1',
+        content: 'The apartment has a great kitchen and the landlord is very responsive.',
+        timestamp: new Date(Date.now() - 7200000),
+        isRead: true
+      },
+      {
+        id: '5',
+        conversationId: '2',
+        senderId: '1',
+        receiverId: '3',
+        content: 'Thanks for the info about the apartment!',
+        timestamp: new Date(Date.now() - 3600000),
+        isRead: true
+      }
     ]
   };
 
@@ -103,6 +126,7 @@ export class MessageService {
         const conversations = this.mockConversations.filter(conv => 
           conv.participants.includes(userId)
         );
+        console.log(`✅ Found ${conversations.length} conversations for user ${userId}:`, conversations);
         observer.next(conversations);
         observer.complete();
       }, 600);
@@ -115,6 +139,7 @@ export class MessageService {
     return new Observable(observer => {
       setTimeout(() => {
         const messages = this.mockMessages[conversationId] || [];
+        console.log(`✅ Found ${messages.length} messages for conversation ${conversationId}`);
         observer.next(messages);
         observer.complete();
       }, 400);
