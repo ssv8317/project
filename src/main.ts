@@ -8,12 +8,6 @@ import { CommonModule } from '@angular/common';
 import { routes } from './app/app.routes';
 import { NavbarComponent } from './app/components/navbar/navbar.component';
 
-// Import all mock services to ensure they're available
-import { MockAuthService } from './app/services/mock-auth.service';
-import { MockHousingService } from './app/services/mock-housing.service';
-import { MockMatchService } from './app/services/mock-match.service';
-import { MockMessageService } from './app/services/mock-message.service';
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -36,8 +30,8 @@ export class App {
       this.isDashboardPage = this.router.url === '/dashboard';
     });
 
-    // Log that mock services are ready
-    console.log('🚀 HomeMate App Started with Mock Services');
+    // Log that app is ready
+    console.log('🚀 HomeMate App Started');
     console.log('📝 Test Login: john@example.com / password123');
     console.log('📝 Test Login: jane@example.com / password123');
   }
@@ -51,11 +45,6 @@ bootstrapApplication(App, {
       ReactiveFormsModule,
       FormsModule,
       CommonModule
-    ),
-    // Provide mock services
-    MockAuthService,
-    MockHousingService,
-    MockMatchService,
-    MockMessageService
+    )
   ]
-}).catch(err => console.error(err));
+}).catch(err => console.error('❌ App bootstrap error:', err));

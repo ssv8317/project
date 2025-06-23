@@ -1,141 +1,247 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import { RoommateProfile, RoommateProfileView, MatchResponse, UserAction, SwipeRequest } from '../models/match.model';
-import { MockMatchService } from './mock-match.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MatchService {
   private apiUrl = '/api/match';
-  private useMockService = true; // Toggle this to switch between mock and real API
 
-  constructor(
-    private http: HttpClient,
-    private mockMatchService: MockMatchService
-  ) {}
+  // Mock data for demo
+  private mockProfiles: RoommateProfile[] = [
+    {
+      id: '1',
+      userId: '2',
+      displayName: 'Alex Johnson',
+      age: 24,
+      gender: 'Male',
+      occupation: 'Data Scientist',
+      bio: 'Love hiking, cooking, and board games. Looking for a clean, respectful roommate.',
+      profilePictures: ['https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg'],
+      budgetMin: 1000,
+      budgetMax: 1500,
+      preferredLocations: ['Downtown', 'Midtown'],
+      cleanliness: 4,
+      socialLevel: 3,
+      noiseLevel: 2,
+      smokingOk: false,
+      petsOk: true,
+      interests: ['Hiking', 'Cooking', 'Board Games', 'Tech'],
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: '2',
+      userId: '3',
+      displayName: 'Sarah Chen',
+      age: 22,
+      gender: 'Female',
+      occupation: 'Graphic Designer',
+      bio: 'Creative soul who loves art, music, and yoga. Very organized and friendly.',
+      profilePictures: ['https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg'],
+      budgetMin: 800,
+      budgetMax: 1200,
+      preferredLocations: ['Campus Area', 'Arts District'],
+      cleanliness: 5,
+      socialLevel: 4,
+      noiseLevel: 2,
+      smokingOk: false,
+      petsOk: false,
+      interests: ['Art', 'Music', 'Yoga', 'Photography'],
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: '3',
+      userId: '4',
+      displayName: 'Mike Rodriguez',
+      age: 26,
+      gender: 'Male',
+      occupation: 'Marketing Manager',
+      bio: 'Outgoing professional who enjoys fitness, movies, and trying new restaurants.',
+      profilePictures: ['https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg'],
+      budgetMin: 1200,
+      budgetMax: 1800,
+      preferredLocations: ['Downtown', 'Business District'],
+      cleanliness: 3,
+      socialLevel: 5,
+      noiseLevel: 3,
+      smokingOk: false,
+      petsOk: true,
+      interests: ['Fitness', 'Movies', 'Food', 'Travel'],
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+  ];
+
+  private swipeHistory: { [userId: string]: string[] } = {};
+  private matches: { [userId: string]: string[] } = {};
+
+  constructor(private http: HttpClient) {}
 
   getPotentialMatches(userId: string): Observable<MatchResponse[]> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock match service for potential matches');
-      return this.mockMatchService.getPotentialMatches(userId);
-    }
+    console.log('💕 Getting potential matches for user:', userId);
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        // Filter out profiles the user has already swiped on
+        const swipedProfiles = this.swipeHistory[userId] || [];
+        const availableProfiles = this.mockProfiles.filter(p => 
+          p.userId !== userId && !swipedProfiles.includes(p.id)
+        );
 
-    return this.http.get<MatchResponse[]>(`${this.apiUrl}/potential/${userId}`)
-      .pipe(
-        map(matches => matches.map(match => ({
-          ...match,
-          profile: {
-            ...match.profile,
-            fullName: match.profile.displayName || '',
-            budgetRange: (typeof match.profile.budgetMin !== 'undefined' && typeof match.profile.budgetMax !== 'undefined')
-              ? `$${match.profile.budgetMin} - $${match.profile.budgetMax}` : '',
-            locationPreference: match.profile.preferredLocations ? match.profile.preferredLocations.join(', ') : '',
-            aboutMe: match.profile.bio || '',
-            sharedInterests: match.profile.interests || [],
-          } as RoommateProfileView,
-          matchPercentage: match.compatibilityScore
-        }))),
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockMatchService.getPotentialMatches(userId);
-        })
-      );
+        // Convert to MatchResponse format with mock compatibility scores
+        const matchResponses: MatchResponse[] = availableProfiles.map(profile => ({
+          id: profile.id,
+          profile: this.convertToProfileView(profile),
+          compatibilityScore: Math.floor(Math.random() * 40) + 60, // 60-100% compatibility
+          isNewMatch: false
+        }));
+
+        console.log(`✅ Found ${matchResponses.length} potential matches`);
+        observer.next(matchResponses.sort((a, b) => b.compatibilityScore - a.compatibilityScore));
+        observer.complete();
+      }, 1000);
+    });
   }
 
   swipe(userId: string, request: SwipeRequest): Observable<MatchResponse> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock match service for swipe');
-      return this.mockMatchService.swipe(userId, request);
-    }
+    console.log('👆 Swipe:', { userId, request });
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        // Add to swipe history
+        if (!this.swipeHistory[userId]) {
+          this.swipeHistory[userId] = [];
+        }
+        this.swipeHistory[userId].push(request.profileId);
 
-    return this.http.post<MatchResponse>(`${this.apiUrl}/swipe/${userId}`, request)
-      .pipe(
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockMatchService.swipe(userId, request);
-        })
-      );
+        // Find the profile
+        const profile = this.mockProfiles.find(p => p.id === request.profileId);
+        if (!profile) {
+          observer.error(new Error('Profile not found'));
+          return;
+        }
+
+        // Simulate match (30% chance if it's a like)
+        const isNewMatch = request.action === UserAction.Like && Math.random() < 0.3;
+        
+        if (isNewMatch) {
+          if (!this.matches[userId]) {
+            this.matches[userId] = [];
+          }
+          this.matches[userId].push(request.profileId);
+          console.log('🎉 New match created!');
+        }
+
+        const response: MatchResponse = {
+          id: profile.id,
+          profile: this.convertToProfileView(profile),
+          compatibilityScore: Math.floor(Math.random() * 40) + 60,
+          isNewMatch
+        };
+
+        observer.next(response);
+        observer.complete();
+      }, 500);
+    });
   }
 
   getMatches(userId: string): Observable<MatchResponse[]> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock match service for matches');
-      return this.mockMatchService.getMatches(userId);
-    }
+    console.log('💑 Getting matches for user:', userId);
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        const userMatches = this.matches[userId] || [];
+        const matchedProfiles = this.mockProfiles.filter(p => userMatches.includes(p.id));
+        
+        const matchResponses: MatchResponse[] = matchedProfiles.map(profile => ({
+          id: profile.id,
+          profile: this.convertToProfileView(profile),
+          compatibilityScore: Math.floor(Math.random() * 40) + 60,
+          isNewMatch: false
+        }));
 
-    return this.http.get<MatchResponse[]>(`${this.apiUrl}/matches/${userId}`)
-      .pipe(
-        map(matches => matches.map(match => ({
-          ...match,
-          profile: {
-            ...match.profile,
-            fullName: match.profile.displayName || '',
-            budgetRange: (typeof match.profile.budgetMin !== 'undefined' && typeof match.profile.budgetMax !== 'undefined')
-              ? `$${match.profile.budgetMin} - $${match.profile.budgetMax}` : '',
-            locationPreference: match.profile.preferredLocations ? match.profile.preferredLocations.join(', ') : '',
-            aboutMe: match.profile.bio || '',
-            sharedInterests: match.profile.interests || [],
-          } as RoommateProfileView,
-          matchPercentage: match.compatibilityScore
-        }))),
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockMatchService.getMatches(userId);
-        })
-      );
+        console.log(`✅ Found ${matchResponses.length} matches`);
+        observer.next(matchResponses);
+        observer.complete();
+      }, 800);
+    });
   }
 
   getRoommateProfile(userId: string): Observable<RoommateProfile> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock match service for roommate profile');
-      return this.mockMatchService.getRoommateProfile(userId);
-    }
-
-    return this.http.get<RoommateProfile>(`${this.apiUrl}/profile/${userId}`)
-      .pipe(
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockMatchService.getRoommateProfile(userId);
-        })
-      );
+    console.log('👤 Getting roommate profile for user:', userId);
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        const profile = this.mockProfiles.find(p => p.userId === userId);
+        if (!profile) {
+          observer.error(new Error('Profile not found'));
+          return;
+        }
+        observer.next(profile);
+        observer.complete();
+      }, 600);
+    });
   }
 
   createOrUpdateProfile(userId: string, profile: RoommateProfile): Observable<RoommateProfile> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock match service for create/update profile');
-      return this.mockMatchService.createOrUpdateProfile(userId, profile);
-    }
+    console.log('💾 Create/update profile for user:', userId);
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        // Find existing profile or create new one
+        const existingIndex = this.mockProfiles.findIndex(p => p.userId === userId);
+        
+        const updatedProfile = {
+          ...profile,
+          userId,
+          id: existingIndex >= 0 ? this.mockProfiles[existingIndex].id : (this.mockProfiles.length + 1).toString(),
+          updatedAt: new Date().toISOString()
+        };
 
-    return this.http.post<RoommateProfile>(`${this.apiUrl}/profile/${userId}`, profile)
-      .pipe(
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockMatchService.createOrUpdateProfile(userId, profile);
-        })
-      );
+        if (existingIndex >= 0) {
+          this.mockProfiles[existingIndex] = updatedProfile;
+        } else {
+          this.mockProfiles.push(updatedProfile);
+        }
+
+        console.log('✅ Profile saved successfully');
+        observer.next(updatedProfile);
+        observer.complete();
+      }, 1000);
+    });
+  }
+
+  private convertToProfileView(profile: RoommateProfile): RoommateProfileView {
+    return {
+      ...profile,
+      fullName: profile.displayName,
+      budgetRange: `$${profile.budgetMin} - $${profile.budgetMax}`,
+      locationPreference: profile.preferredLocations.join(', '),
+      aboutMe: profile.bio,
+      sharedInterests: profile.interests
+    };
   }
 
   // Helper methods
   getCompatibilityText(score: number): string {
-    return this.mockMatchService.getCompatibilityText(score);
+    if (score >= 80) return 'Excellent Match';
+    if (score >= 60) return 'Good Match';
+    if (score >= 40) return 'Fair Match';
+    return 'Low Match';
   }
 
   getCompatibilityColor(score: number): string {
-    return this.mockMatchService.getCompatibilityColor(score);
-  }
-
-  // Method to toggle between mock and real API (for testing)
-  setUseMockService(useMock: boolean): void {
-    this.useMockService = useMock;
-    console.log(`🔄 Switched to ${useMock ? 'mock' : 'real'} match API service`);
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-blue-600';
+    if (score >= 40) return 'text-yellow-600';
+    return 'text-red-600';
   }
 }
 

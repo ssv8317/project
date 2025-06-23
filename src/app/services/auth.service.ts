@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, of, catchError } from 'rxjs';
 import { User, LoginRequest, RegisterRequest, AuthResponse } from '../models/user.model';
-import { MockAuthService } from './mock-auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +10,46 @@ export class AuthService {
   private baseUrl = '/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
-  private useMockService = true; // Toggle this to switch between mock and real API
 
-  constructor(
-    private http: HttpClient,
-    private mockAuthService: MockAuthService
-  ) {
+  // Mock user database for demo
+  private mockUsers: User[] = [
+    {
+      id: '1',
+      fullName: 'John Doe',
+      email: 'john@example.com',
+      age: 25,
+      gender: 'Male',
+      occupation: 'Software Engineer',
+      college: 'MIT',
+      sleepSchedule: 'Night Owl',
+      cleanlinessLevel: 'High',
+      smokingPreference: 'No',
+      petFriendly: 'Yes',
+      budgetRange: '$1000-1500',
+      locationPreference: 'Downtown',
+      aboutMe: 'I love coding and playing video games. Looking for a clean, quiet roommate.',
+      createdAt: new Date()
+    },
+    {
+      id: '2',
+      fullName: 'Jane Smith',
+      email: 'jane@example.com',
+      age: 23,
+      gender: 'Female',
+      occupation: 'Designer',
+      college: 'Stanford',
+      sleepSchedule: 'Early Bird',
+      cleanlinessLevel: 'Medium',
+      smokingPreference: 'No',
+      petFriendly: 'No',
+      budgetRange: '$800-1200',
+      locationPreference: 'Near Campus',
+      aboutMe: 'Creative designer who loves art and music. Very organized and friendly.',
+      createdAt: new Date()
+    }
+  ];
+
+  constructor(private http: HttpClient) {
     this.loadUserFromStorage();
   }
 
@@ -35,57 +68,82 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock auth service for login');
-      return this.mockAuthService.login(credentials);
-    }
-
-    console.log('🔐 Attempting real API login with:', { email: credentials.email });
+    console.log('🔐 Login attempt for:', credentials.email);
     
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials)
-      .pipe(
-        tap(response => {
-          console.log('✅ Login successful:', response);
-          
-          if (response.token) {
-            localStorage.setItem('token', response.token);
-          }
-          localStorage.setItem('user', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user);
-        }),
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockAuthService.login(credentials);
-        })
-      );
+    // Use mock authentication for demo
+    return new Observable(observer => {
+      setTimeout(() => {
+        const user = this.mockUsers.find(u => u.email === credentials.email);
+        
+        if (!user) {
+          observer.error({ error: { message: 'User not found' } });
+          return;
+        }
+
+        // Simple password check (in real app, this would be hashed)
+        if (credentials.password !== 'password123') {
+          observer.error({ error: { message: 'Invalid password' } });
+          return;
+        }
+
+        const token = 'mock-jwt-token-' + Date.now();
+        const response: AuthResponse = { token, user };
+
+        // Store in localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+
+        console.log('✅ Login successful');
+        observer.next(response);
+        observer.complete();
+      }, 1000);
+    });
   }
 
   register(userData: RegisterRequest): Observable<{ user: User }> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock auth service for registration');
-      return this.mockAuthService.register(userData);
-    }
-
-    console.log('📝 Attempting real API registration for:', userData.email);
+    console.log('📝 Registration for:', userData.email);
     
-    interface RegisterResponse {
-      user: User;
-    }
+    return new Observable(observer => {
+      setTimeout(() => {
+        // Check if user already exists
+        const existingUser = this.mockUsers.find(u => u.email === userData.email);
+        if (existingUser) {
+          observer.error({ error: { message: 'User already exists with this email' } });
+          return;
+        }
 
-    return this.http.post<RegisterResponse>(`${this.baseUrl}/register`, userData)
-      .pipe(
-        tap((response: RegisterResponse) => {
-          console.log('✅ Registration successful:', response);
-          localStorage.setItem('user', JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user);
-        }),
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockAuthService.register(userData);
-        })
-      );
+        // Create new user
+        const newUser: User = {
+          id: (this.mockUsers.length + 1).toString(),
+          fullName: userData.fullName,
+          email: userData.email,
+          age: userData.age,
+          gender: userData.gender,
+          occupation: userData.occupation,
+          college: userData.college,
+          sleepSchedule: userData.sleepSchedule,
+          cleanlinessLevel: userData.cleanlinessLevel,
+          smokingPreference: userData.smokingPreference,
+          petFriendly: userData.petFriendly,
+          budgetRange: userData.budgetRange,
+          locationPreference: userData.locationPreference,
+          aboutMe: userData.aboutMe,
+          createdAt: new Date()
+        };
+
+        // Add to mock database
+        this.mockUsers.push(newUser);
+
+        // Store in localStorage
+        localStorage.setItem('user', JSON.stringify(newUser));
+        this.currentUserSubject.next(newUser);
+
+        console.log('✅ Registration successful');
+        observer.next({ user: newUser });
+        observer.complete();
+      }, 1500);
+    });
   }
 
   logout(): void {
@@ -128,11 +186,5 @@ export class AuthService {
   getCurrentUserSync(): User | null {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
-  }
-
-  // Method to toggle between mock and real API (for testing)
-  setUseMockService(useMock: boolean): void {
-    this.useMockService = useMock;
-    console.log(`🔄 Switched to ${useMock ? 'mock' : 'real'} API service`);
   }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError } from 'rxjs';
-import { MockMessageService } from './mock-message.service';
+import { Observable, of } from 'rxjs';
 
 export interface ChatMessage {
   id: string;
@@ -27,80 +26,144 @@ export interface Conversation {
 })
 export class MessageService {
   private apiUrl = '/api';
-  private useMockService = true; // Toggle this to switch between mock and real API
 
-  constructor(
-    private http: HttpClient,
-    private mockMessageService: MockMessageService
-  ) {}
+  // Mock data for demo
+  private mockConversations: Conversation[] = [
+    {
+      id: '1',
+      participants: ['1', '2'],
+      lastMessageTime: new Date(),
+      unreadCount: 2,
+      lastMessage: {
+        id: '1',
+        conversationId: '1',
+        senderId: '2',
+        receiverId: '1',
+        content: 'Hey! I saw we matched. Would love to chat about potentially being roommates!',
+        timestamp: new Date(),
+        isRead: false
+      }
+    },
+    {
+      id: '2',
+      participants: ['1', '3'],
+      lastMessageTime: new Date(Date.now() - 3600000), // 1 hour ago
+      unreadCount: 0,
+      lastMessage: {
+        id: '2',
+        conversationId: '2',
+        senderId: '1',
+        receiverId: '3',
+        content: 'Thanks for the info about the apartment!',
+        timestamp: new Date(Date.now() - 3600000),
+        isRead: true
+      }
+    }
+  ];
+
+  private mockMessages: { [conversationId: string]: ChatMessage[] } = {
+    '1': [
+      {
+        id: '1',
+        conversationId: '1',
+        senderId: '2',
+        receiverId: '1',
+        content: 'Hi there! I saw we matched.',
+        timestamp: new Date(Date.now() - 7200000), // 2 hours ago
+        isRead: true
+      },
+      {
+        id: '2',
+        conversationId: '1',
+        senderId: '1',
+        receiverId: '2',
+        content: 'Hey! Nice to meet you. I saw your profile and we seem compatible!',
+        timestamp: new Date(Date.now() - 6600000), // 1.5 hours ago
+        isRead: true
+      },
+      {
+        id: '3',
+        conversationId: '1',
+        senderId: '2',
+        receiverId: '1',
+        content: 'Hey! I saw we matched. Would love to chat about potentially being roommates!',
+        timestamp: new Date(),
+        isRead: false
+      }
+    ]
+  };
+
+  constructor(private http: HttpClient) {}
 
   getConversations(userId: string): Observable<Conversation[]> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock message service for conversations');
-      return this.mockMessageService.getConversations(userId);
-    }
-
-    return this.http.get<Conversation[]>(`${this.apiUrl}/messages/conversations/${userId}`)
-      .pipe(
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockMessageService.getConversations(userId);
-        })
-      );
+    console.log('💬 Getting conversations for user:', userId);
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        const conversations = this.mockConversations.filter(conv => 
+          conv.participants.includes(userId)
+        );
+        observer.next(conversations);
+        observer.complete();
+      }, 600);
+    });
   }
 
   getMessages(conversationId: string): Observable<ChatMessage[]> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock message service for messages');
-      return this.mockMessageService.getMessages(conversationId);
-    }
-
-    return this.http.get<ChatMessage[]>(`${this.apiUrl}/messages/${conversationId}`)
-      .pipe(
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockMessageService.getMessages(conversationId);
-        })
-      );
+    console.log('📨 Getting messages for conversation:', conversationId);
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        const messages = this.mockMessages[conversationId] || [];
+        observer.next(messages);
+        observer.complete();
+      }, 400);
+    });
   }
 
   sendMessage(message: Partial<ChatMessage>): Observable<ChatMessage> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock message service for send message');
-      return this.mockMessageService.sendMessage(message);
-    }
+    console.log('📤 Sending message:', message);
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        const newMessage: ChatMessage = {
+          id: Date.now().toString(),
+          conversationId: message.conversationId!,
+          senderId: message.senderId!,
+          receiverId: message.receiverId!,
+          content: message.content!,
+          timestamp: new Date(),
+          isRead: false
+        };
 
-    return this.http.post<ChatMessage>(`${this.apiUrl}/messages`, message)
-      .pipe(
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockMessageService.sendMessage(message);
-        })
-      );
+        // Add to mock messages
+        if (!this.mockMessages[newMessage.conversationId]) {
+          this.mockMessages[newMessage.conversationId] = [];
+        }
+        this.mockMessages[newMessage.conversationId].push(newMessage);
+
+        // Update conversation
+        const conversation = this.mockConversations.find(c => c.id === newMessage.conversationId);
+        if (conversation) {
+          conversation.lastMessage = newMessage;
+          conversation.lastMessageTime = newMessage.timestamp;
+        }
+
+        console.log('✅ Message sent');
+        observer.next(newMessage);
+        observer.complete();
+      }, 800);
+    });
   }
 
   markAsRead(messageId: string): Observable<void> {
-    if (this.useMockService) {
-      console.log('🔄 Using mock message service for mark as read');
-      return this.mockMessageService.markAsRead(messageId);
-    }
-
-    return this.http.put<void>(`${this.apiUrl}/messages/${messageId}/read`, {})
-      .pipe(
-        catchError(error => {
-          console.log('❌ Real API failed, falling back to mock service');
-          this.useMockService = true;
-          return this.mockMessageService.markAsRead(messageId);
-        })
-      );
-  }
-
-  // Method to toggle between mock and real API (for testing)
-  setUseMockService(useMock: boolean): void {
-    this.useMockService = useMock;
-    console.log(`🔄 Switched to ${useMock ? 'mock' : 'real'} message API service`);
+    console.log('✅ Marking message as read:', messageId);
+    
+    return new Observable(observer => {
+      setTimeout(() => {
+        observer.next();
+        observer.complete();
+      }, 200);
+    });
   }
 }
