@@ -92,7 +92,9 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    this.checkScreenSize();
+    setTimeout(() => {
+      this.checkScreenSize();
+    }, 0);
   }
 
   private checkScreenSize() {
