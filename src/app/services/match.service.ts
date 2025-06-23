@@ -76,30 +76,55 @@ export class MatchService {
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
+    },
+    {
+      id: '4',
+      userId: '5',
+      displayName: 'Emma Wilson',
+      age: 23,
+      gender: 'Female',
+      occupation: 'Graduate Student',
+      bio: 'Quiet student focused on studies. Love reading, coffee, and weekend adventures.',
+      profilePictures: ['https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg'],
+      budgetMin: 600,
+      budgetMax: 1000,
+      preferredLocations: ['Campus Area', 'Library District'],
+      cleanliness: 4,
+      socialLevel: 2,
+      noiseLevel: 1,
+      smokingOk: false,
+      petsOk: false,
+      interests: ['Reading', 'Coffee', 'Hiking', 'Study Groups'],
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     }
   ];
 
   private swipeHistory: { [userId: string]: string[] } = {};
   
-  // Pre-populate some matches for demo - John (user ID '1') already has matches
+  // Pre-populate matches for John Doe (user ID '1')
   private matches: { [userId: string]: string[] } = {
-    '1': ['2', '3'] // John is matched with Sarah and Mike
+    '1': ['2', '3'] // John is matched with Sarah Chen and Mike Rodriguez
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('🎯 MatchService initialized with pre-existing matches:', this.matches);
+  }
 
   getPotentialMatches(userId: string): Observable<MatchResponse[]> {
     console.log('💕 Getting potential matches for user:', userId);
     
     return new Observable(observer => {
       setTimeout(() => {
-        // Filter out profiles the user has already swiped on
+        // Filter out profiles the user has already swiped on or matched with
         const swipedProfiles = this.swipeHistory[userId] || [];
         const matchedProfiles = this.matches[userId] || [];
+        const excludedProfiles = [...swipedProfiles, ...matchedProfiles];
+        
         const availableProfiles = this.mockProfiles.filter(p => 
           p.userId !== userId && 
-          !swipedProfiles.includes(p.id) && 
-          !matchedProfiles.includes(p.id)
+          !excludedProfiles.includes(p.id)
         );
 
         // Convert to MatchResponse format with mock compatibility scores
@@ -135,8 +160,8 @@ export class MatchService {
           return;
         }
 
-        // Simulate match (50% chance if it's a like for better demo)
-        const isNewMatch = request.action === UserAction.Like && Math.random() < 0.5;
+        // Simulate match (60% chance if it's a like for better demo)
+        const isNewMatch = request.action === UserAction.Like && Math.random() < 0.6;
         
         if (isNewMatch) {
           if (!this.matches[userId]) {
@@ -161,20 +186,24 @@ export class MatchService {
 
   getMatches(userId: string): Observable<MatchResponse[]> {
     console.log('💑 Getting matches for user:', userId);
+    console.log('📊 Current matches data:', this.matches);
     
     return new Observable(observer => {
       setTimeout(() => {
         const userMatches = this.matches[userId] || [];
+        console.log(`👤 User ${userId} has matches:`, userMatches);
+        
         const matchedProfiles = this.mockProfiles.filter(p => userMatches.includes(p.id));
+        console.log('🔍 Found matched profiles:', matchedProfiles);
         
         const matchResponses: MatchResponse[] = matchedProfiles.map(profile => ({
           id: profile.id,
           profile: this.convertToProfileView(profile),
-          compatibilityScore: Math.floor(Math.random() * 40) + 60,
+          compatibilityScore: Math.floor(Math.random() * 20) + 75, // 75-95% for matches
           isNewMatch: false
         }));
 
-        console.log(`✅ Found ${matchResponses.length} matches`);
+        console.log(`✅ Returning ${matchResponses.length} matches for user ${userId}`);
         observer.next(matchResponses);
         observer.complete();
       }, 800);

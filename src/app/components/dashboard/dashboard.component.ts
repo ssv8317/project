@@ -81,6 +81,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('🚀 Dashboard component initializing...');
     this.loadCurrentUser();
     this.loadFeaturedListings();
     this.loadPotentialMatches();
@@ -90,12 +91,13 @@ export class DashboardComponent implements OnInit {
     this.authService.getCurrentUser().subscribe({
       next: (user: User | null) => {
         if (user) {
+          console.log('👤 Current user loaded:', user);
           this.currentUser = user;
           this.loadUserMatches();
         }
       },
       error: (error: any) => {
-        console.error('Error loading user:', error);
+        console.error('❌ Error loading user:', error);
       }
     });
   }
@@ -196,15 +198,17 @@ export class DashboardComponent implements OnInit {
 
   loadPotentialMatches(): void {
     if (this.currentUser?.id) {
+      console.log('🔍 Loading potential matches for user:', this.currentUser.id);
       this.isLoadingMatches = true;
       this.matchService.getPotentialMatches(this.currentUser.id).subscribe({
         next: (matches) => {
+          console.log('✅ Potential matches loaded:', matches);
           this.potentialMatches = matches;
           this.currentMatchIndex = 0; // Reset index when loading new matches
           this.isLoadingMatches = false;
         },
         error: (error) => {
-          console.error('Error loading potential matches:', error);
+          console.error('❌ Error loading potential matches:', error);
           this.isLoadingMatches = false;
         }
       });
@@ -213,11 +217,11 @@ export class DashboardComponent implements OnInit {
 
   // Add swipeLeft and swipeRight for template compatibility
   swipeLeft(): void {
-    this.onSwipe('dislike' as unknown as UserAction);
+    this.onSwipe(UserAction.Pass);
   }
 
   swipeRight(): void {
-    this.onSwipe('like' as unknown as UserAction);
+    this.onSwipe(UserAction.Like);
   }
 
   onSwipe(action: UserAction): void {
@@ -227,16 +231,22 @@ export class DashboardComponent implements OnInit {
         profileId: currentMatch.profile.id,
         action: action
       };
+      
+      console.log('👆 Processing swipe:', request);
+      
       this.matchService.swipe(this.currentUser.id, request).subscribe({
         next: (response) => {
+          console.log('✅ Swipe processed:', response);
           if (response.isNewMatch) {
             this.newMatch = response;
             this.showMatchModal = true;
+            // Refresh matches list
+            this.loadUserMatches();
           }
           this.nextMatch();
         },
         error: (error) => {
-          console.error('Error processing swipe:', error);
+          console.error('❌ Error processing swipe:', error);
           this.nextMatch();
         }
       });
@@ -248,6 +258,8 @@ export class DashboardComponent implements OnInit {
     if (this.currentMatchIndex >= this.potentialMatches.length) {
       this.currentMatchIndex = 0;
       // Optionally reload matches or show a message
+      console.log('🔄 Reached end of potential matches, reloading...');
+      this.loadPotentialMatches();
     }
   }
 
@@ -259,9 +271,15 @@ export class DashboardComponent implements OnInit {
 
   loadUserMatches(): void {
     if (this.currentUser?.id) {
+      console.log('💑 Loading user matches for:', this.currentUser.id);
       this.matchService.getMatches(this.currentUser.id).subscribe({
-        next: (matches: MatchResponse[]) => this.userMatches = matches,
-        error: (error: any) => console.error('Error loading matches:', error)
+        next: (matches: MatchResponse[]) => {
+          console.log('✅ User matches loaded:', matches);
+          this.userMatches = matches;
+        },
+        error: (error: any) => {
+          console.error('❌ Error loading matches:', error);
+        }
       });
     }
   }
