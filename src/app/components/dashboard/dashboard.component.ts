@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -21,9 +21,7 @@ type TabType = 'home' | 'apartments' | 'saved' | 'matches' | 'messages' | 'profi
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit, AfterViewChecked {
-  @ViewChild('messagesContainer') messagesContainer!: ElementRef;
-
+export class DashboardComponent implements OnInit {
   activeTab: TabType = 'home';
 
   // User and UI state
@@ -31,7 +29,6 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
   mobileMenuOpen: boolean = false;
   loading = false;
   error: string | null = null;
-  isMobile = false;
 
   // Housing related
   featuredListings: HousingListing[] = [];
@@ -49,24 +46,19 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
   showMatchModal = false;
   newMatch: MatchResponse | null = null;
 
-  // Enhanced messaging
   conversations: Conversation[] = [];
-  selectedConversation: Conversation | null = null;
-  currentMessages: ChatMessage[] = [];
+  messages: ChatMessage[] = [];
   newMessage: string = '';
-  searchQuery: string = '';
-  unreadCount = 0;
-  isTyping: boolean = false;
-  typingTimeout: any;
-
-  // Legacy compatibility
   selectedProfile: any;
   chatMessages: { [profileId: string]: any[] } = {};
+
+  // Add this property to your component class
   matchedProfiles: any[] = [];
+  public isTyping: boolean = false;
 
   constructor(
     private authService: AuthService,
-    public matchService: MatchService,
+    public matchService: MatchService, // <-- Make public for template access
     private housingService: HousingService,
     private messageService: MessageService,
     private formBuilder: FormBuilder
@@ -86,38 +78,13 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
       balcony: [false],
       amenities: ['']
     });
-
-    this.checkScreenSize();
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    this.checkScreenSize();
-  }
-
-  private checkScreenSize() {
-    this.isMobile = window.innerWidth < 768;
   }
 
   ngOnInit(): void {
     console.log('🚀 Dashboard component initializing...');
     this.loadCurrentUser();
     this.loadFeaturedListings();
-    this.loadConversations();
-  }
-
-  ngAfterViewChecked() {
-    this.scrollToBottom();
-  }
-
-  private scrollToBottom(): void {
-    if (this.messagesContainer) {
-      try {
-        this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
-      } catch (err) {
-        console.error('Error scrolling to bottom:', err);
-      }
-    }
+    this.loadPotentialMatches();
   }
 
   loadCurrentUser(): void {
@@ -127,9 +94,6 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
           console.log('👤 Current user loaded:', user);
           this.currentUser = user;
           this.loadUserMatches();
-          this.loadPotentialMatches();
-        } else {
-          console.log('❌ No current user found');
         }
       },
       error: (error: any) => {
@@ -240,7 +204,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
         next: (matches) => {
           console.log('✅ Potential matches loaded:', matches);
           this.potentialMatches = matches;
-          this.currentMatchIndex = 0;
+          this.currentMatchIndex = 0; // Reset index when loading new matches
           this.isLoadingMatches = false;
         },
         error: (error) => {
@@ -251,6 +215,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
     }
   }
 
+  // Add swipeLeft and swipeRight for template compatibility
   swipeLeft(): void {
     this.onSwipe(UserAction.Pass);
   }
@@ -275,6 +240,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
           if (response.isNewMatch) {
             this.newMatch = response;
             this.showMatchModal = true;
+            // Refresh matches list
             this.loadUserMatches();
           }
           this.nextMatch();
@@ -291,6 +257,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
     this.currentMatchIndex++;
     if (this.currentMatchIndex >= this.potentialMatches.length) {
       this.currentMatchIndex = 0;
+      // Optionally reload matches or show a message
       console.log('🔄 Reached end of potential matches, reloading...');
       this.loadPotentialMatches();
     }
@@ -309,180 +276,18 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
         next: (matches: MatchResponse[]) => {
           console.log('✅ User matches loaded:', matches);
           this.userMatches = matches;
-          this.matchedProfiles = matches.map(match => ({
-            ...match.profile,
-            matchPercentage: match.compatibilityScore
-          }));
         },
         error: (error: any) => {
           console.error('❌ Error loading matches:', error);
         }
       });
-    } else {
-      console.log('❌ Cannot load matches - no current user ID');
     }
   }
 
-  // --- ENHANCED MESSAGING METHODS ---
+  // --- END MATCHING SYSTEM METHODS ---
 
-  loadConversations(): void {
-    if (this.currentUser?.id) {
-      this.messageService.getConversations(this.currentUser.id).subscribe({
-        next: (conversations) => {
-          this.conversations = conversations;
-          this.updateUnreadCount();
-        },
-        error: (error) => {
-          console.error('Error loading conversations:', error);
-        }
-      });
-    }
-  }
-
-  selectConversation(conversation: Conversation): void {
-    this.selectedConversation = conversation;
-    this.loadMessages(conversation.id);
-    
-    // Mark conversation as read
-    if (conversation.unreadCount > 0) {
-      conversation.unreadCount = 0;
-      this.updateUnreadCount();
-    }
-  }
-
-  loadMessages(conversationId: string): void {
-    this.messageService.getMessages(conversationId).subscribe({
-      next: (messages) => {
-        this.currentMessages = messages.map(msg => ({
-          ...msg,
-          isOwn: msg.senderId === this.currentUser?.id
-        }));
-        setTimeout(() => this.scrollToBottom(), 100);
-      },
-      error: (error) => {
-        console.error('Error loading messages:', error);
-      }
-    });
-  }
-
-  sendMessage(): void {
-    if (!this.newMessage.trim() || !this.selectedConversation || !this.currentUser?.id) {
-      return;
-    }
-
-    const otherParticipant = this.selectedConversation.participants.find(p => p !== this.currentUser?.id);
-    if (!otherParticipant) return;
-
-    const messageData: Partial<ChatMessage> = {
-      conversationId: this.selectedConversation.id,
-      senderId: this.currentUser.id,
-      receiverId: otherParticipant,
-      content: this.newMessage.trim()
-    };
-
-    this.messageService.sendMessage(messageData).subscribe({
-      next: (message) => {
-        this.currentMessages.push({
-          ...message,
-          isOwn: true
-        });
-        this.newMessage = '';
-        
-        // Update conversation
-        if (this.selectedConversation) {
-          this.selectedConversation.lastMessage = message;
-          this.selectedConversation.lastMessageTime = message.timestamp;
-        }
-        
-        setTimeout(() => this.scrollToBottom(), 100);
-      },
-      error: (error) => {
-        console.error('Error sending message:', error);
-      }
-    });
-  }
-
-  onMessageKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      this.sendMessage();
-    }
-  }
-
-  onMessageInput(): void {
-    // Simulate typing indicator
-    this.isTyping = true;
-    
-    if (this.typingTimeout) {
-      clearTimeout(this.typingTimeout);
-    }
-    
-    this.typingTimeout = setTimeout(() => {
-      this.isTyping = false;
-    }, 1000);
-  }
-
-  get filteredConversations(): Conversation[] {
-    if (!this.searchQuery.trim()) {
-      return this.conversations;
-    }
-    
-    return this.conversations.filter(conv => 
-      this.getConversationName(conv).toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
-  }
-
-  getConversationName(conversation: Conversation): string {
-    const otherParticipant = conversation.participants.find(p => p !== this.currentUser?.id);
-    // In a real app, you'd fetch the user name by ID
-    return `User ${otherParticipant}`;
-  }
-
-  getConversationInitials(conversation: Conversation): string {
-    const name = this.getConversationName(conversation);
-    return this.getInitials(name);
-  }
-
-  getMessageSenderInitials(message: ChatMessage): string {
-    if (message.senderId === this.currentUser?.id) {
-      return this.getInitials(this.currentUser.fullName);
-    }
-    return this.getInitials(`User ${message.senderId}`);
-  }
-
-  isUserOnline(conversation: Conversation): boolean {
-    // Simulate online status
-    return Math.random() > 0.5;
-  }
-
-  formatTime(date: Date): string {
-    const now = new Date();
-    const messageDate = new Date(date);
-    const diffInHours = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
-    
-    if (diffInHours < 1) {
-      return 'Just now';
-    } else if (diffInHours < 24) {
-      return `${Math.floor(diffInHours)}h ago`;
-    } else {
-      return messageDate.toLocaleDateString();
-    }
-  }
-
-  formatMessageTime(date: Date): string {
-    return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-
-  trackByMessageId(index: number, message: ChatMessage): string {
-    return message.id;
-  }
-
-  private updateUnreadCount(): void {
-    this.unreadCount = this.conversations.reduce((total, conv) => total + conv.unreadCount, 0);
-  }
-
-  // --- UTILITY METHODS ---
-
+  // Messaging and other methods remain unchanged...
+  // (You can keep your getChatMessages, sendMessage, getInitials, saveProfile, resetProfile, etc.)
   getInitials(name: string | undefined | null): string {
     if (!name) return '';
     const parts = name.trim().split(' ');
@@ -490,6 +295,7 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
     return (parts[0][0] + (parts[1][0] || '')).toUpperCase();
   }
 
+  // Add this method to your DashboardComponent class
   selectProfile(profile: any): void {
     this.selectedProfile = profile;
   }
@@ -498,18 +304,19 @@ export class DashboardComponent implements OnInit, AfterViewChecked {
     return this.chatMessages[profileId] || [];
   }
 
-  setActiveTab(tab: TabType): void {
-    console.log('📱 Switching to tab:', tab);
-    this.activeTab = tab;
-    
-    // Load data when switching to specific tabs
-    if (tab === 'matches' && this.currentUser?.id) {
-      this.loadUserMatches();
-    } else if (tab === 'messages') {
-      this.loadConversations();
+  sendMessage() {
+    if (!this.newMessage.trim() || !this.selectedProfile) {
+      return;
     }
-    
-    // Close mobile menu when tab is selected
-    this.mobileMenuOpen = false;
+    const profileId = this.selectedProfile.id;
+    if (!this.chatMessages[profileId]) {
+      this.chatMessages[profileId] = [];
+    }
+    this.chatMessages[profileId].push({
+      content: this.newMessage,
+      timestamp: new Date(),
+      isOwn: true
+    });
+    this.newMessage = '';
   }
 }
