@@ -27,7 +27,7 @@
           </button>
           <button (click)="activeTab = 'matches'" [class.text-blue-600]="activeTab === 'matches'" [class.text-gray-700]="activeTab !== 'matches'" class="font-medium transition-colors hover:text-blue-600">
             👥 Matched Profiles
-            <span class="bg-green-500 text-white text-xs rounded-full px-2 py-1 ml-1">{{ matchedProfiles.length }}</span>
+            <span class="bg-green-500 text-white text-xs rounded-full px-2 py-1 ml-1">{{ matchedProfiles?.length || 0 }}</span>
           </button>
           <button (click)="activeTab = 'messages'" [class.text-blue-600]="activeTab === 'messages'" [class.text-gray-700]="activeTab !== 'messages'" class="font-medium transition-colors hover:text-blue-600">
             💬 Messages
@@ -114,7 +114,7 @@
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
           <div class="text-3xl mb-2">🏠</div>
-          <div class="text-2xl font-bold text-gray-900">{{ featuredListings.length + 15 }}</div>
+          <div class="text-2xl font-bold text-gray-900">{{ (featuredListings?.length || 0) + 15 }}</div>
           <div class="text-sm text-gray-600">Available Apartments</div>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
@@ -124,7 +124,7 @@
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
           <div class="text-3xl mb-2">👥</div>
-          <div class="text-2xl font-bold text-gray-900">{{ matchedProfiles.length }}</div>
+          <div class="text-2xl font-bold text-gray-900">{{ matchedProfiles?.length || 0 }}</div>
           <div class="text-sm text-gray-600">Matched Profiles</div>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
@@ -157,7 +157,7 @@
               <span class="mr-3">👥</span>
               <div>
                 <div class="font-semibold">View Matched Profiles</div>
-                <div class="text-sm text-green-100">{{ matchedProfiles.length }} compatible matches</div>
+                <div class="text-sm text-green-100">{{ matchedProfiles?.length || 0 }} compatible matches</div>
               </div>
             </button>
             <button (click)="activeTab = 'messages'" class="w-full bg-purple-500 text-white py-3 px-6 rounded-lg hover:bg-purple-600 transition-all font-medium text-left flex items-center">
@@ -195,7 +195,7 @@
                   <div class="text-sm text-gray-600">Compatible roommates</div>
                 </div>
               </div>
-              <div class="text-2xl font-bold text-green-600">{{ matchedProfiles.length }}</div>
+              <div class="text-2xl font-bold text-green-600">{{ matchedProfiles?.length || 0 }}</div>
             </div>
             <div class="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
               <div class="flex items-center">
@@ -215,40 +215,40 @@
 
       <!-- Roommate Match Swipe UI -->
       <div *ngIf="activeTab === 'home'" class="mb-12">
-        <div *ngIf="potentialMatches.length > 0; else noMatches" class="flex flex-col items-center">
+        <div *ngIf="potentialMatches?.length > 0; else noMatches" class="flex flex-col items-center">
           <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg mb-4">
             <ng-container *ngIf="potentialMatches[currentMatchIndex] as match">
               <div class="flex items-center space-x-4 mb-4">
                 <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-2xl">
-                  {{ match.profile.fullName ? match.profile.fullName[0] : '?' }}
+                  {{ match?.profile?.fullName ? match.profile.fullName[0] : '?' }}
                 </div>
                 <div>
-                  <h3 class="text-xl font-bold text-gray-900">{{ match.profile.fullName }}</h3>
-                  <p class="text-gray-600">{{ match.profile.age }} • {{ match.profile.occupation }}</p>
+                  <h3 class="text-xl font-bold text-gray-900">{{ match?.profile?.fullName || 'Unknown' }}</h3>
+                  <p class="text-gray-600">{{ match?.profile?.age || 'N/A' }} • {{ match?.profile?.occupation || 'N/A' }}</p>
                   <div class="mt-1">
-                    <span [ngClass]="matchService.getCompatibilityColor(match.compatibilityScore)" class="font-semibold">
-                      {{ match.compatibilityScore }}% - {{ matchService.getCompatibilityText(match.compatibilityScore) }}
+                    <span [ngClass]="matchService.getCompatibilityColor(match?.compatibilityScore || 0)" class="font-semibold">
+                      {{ match?.compatibilityScore || 0 }}% - {{ matchService.getCompatibilityText(match?.compatibilityScore || 0) }}
                     </span>
                   </div>
                 </div>
               </div>
               <div class="mb-2">
                 <span class="text-gray-700 font-medium">Budget:</span>
-                <span class="ml-1">{{ match.profile.budgetRange }}</span>
+                <span class="ml-1">{{ match?.profile?.budgetRange || 'N/A' }}</span>
               </div>
               <div class="mb-2">
                 <span class="text-gray-700 font-medium">Location:</span>
-                <span class="ml-1">{{ match.profile.locationPreference }}</span>
+                <span class="ml-1">{{ match?.profile?.locationPreference || 'N/A' }}</span>
               </div>
               <div class="mb-2">
                 <span class="text-gray-700 font-medium">About:</span>
-                <span class="ml-1">{{ match.profile.aboutMe }}</span>
+                <span class="ml-1">{{ match?.profile?.aboutMe || 'N/A' }}</span>
               </div>
               <div class="mb-2">
                 <span class="text-gray-700 font-medium">Interests:</span>
                 <span class="ml-1">
-                  <span *ngFor="let interest of match.profile.sharedInterests; let i = index">
-                    {{ interest }}<span *ngIf="i < match.profile.sharedInterests.length - 1">, </span>
+                  <span *ngFor="let interest of match?.profile?.sharedInterests || []; let i = index">
+                    {{ interest }}<span *ngIf="i < (match?.profile?.sharedInterests?.length || 0) - 1">, </span>
                   </span>
                 </span>
               </div>
@@ -378,11 +378,11 @@
         </form>
 
         <!-- Apartment Results -->
-        <div *ngIf="housingResults.length > 0 || hasSearchedHousing">
+        <div *ngIf="housingResults?.length > 0 || hasSearchedHousing">
           <div class="flex justify-between items-center mb-6">
             <div>
               <h3 class="text-xl font-bold text-gray-900">Search Results</h3>
-              <p class="text-gray-600">{{ housingResults.length }} apartments found</p>
+              <p class="text-gray-600">{{ housingResults?.length || 0 }} apartments found</p>
             </div>
             
             <div class="flex items-center space-x-4">
@@ -400,20 +400,20 @@
           </div>
 
           <!-- Apartment Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="housingResults.length > 0">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="housingResults?.length > 0">
             <div *ngFor="let listing of housingResults" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 group">
               <div class="relative h-48 overflow-hidden">
                 <img 
-                  [src]="listing.images[0]" 
-                  [alt]="listing.title"
+                  [src]="listing?.images?.[0]" 
+                  [alt]="listing?.title"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 >
                 <div class="absolute top-4 left-4">
                   <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-                    ${{ listing.price }}/month
+                    ${{ listing?.price || 0 }}/month
                   </span>
                 </div>
-                <div class="absolute top-4 right-4" *ngIf="listing.isFeatured">
+                <div class="absolute top-4 right-4" *ngIf="listing?.isFeatured">
                   <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
                     ⭐ Featured
                   </span>
@@ -428,39 +428,39 @@
               </div>
 
               <div class="p-6">
-                <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing.title }}</h4>
+                <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing?.title || 'Untitled' }}</h4>
                 <p class="text-gray-600 mb-3 flex items-center">
                   <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                   </svg>
-                  {{ listing.address }}
+                  {{ listing?.address || 'Address not available' }}
                 </p>
                 
                 <div class="flex items-center space-x-4 mb-4 text-sm text-gray-600">
                   <span class="flex items-center">
-                    🛏️ {{ listing.bedrooms }} bed
+                    🛏️ {{ listing?.bedrooms || 0 }} bed
                   </span>
                   <span class="flex items-center">
-                    🚿 {{ listing.bathrooms }} bath
+                    🚿 {{ listing?.bathrooms || 0 }} bath
                   </span>
                   <span class="flex items-center">
-                    📐 {{ listing.squareFeet }} sq ft
+                    📐 {{ listing?.squareFeet || 0 }} sq ft
                   </span>
                 </div>
 
                 <div class="flex flex-wrap gap-2 mb-4">
                   <span 
-                    *ngFor="let amenity of listing.amenities.slice(0, 3)" 
+                    *ngFor="let amenity of listing?.amenities?.slice(0, 3) || []" 
                     class="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium"
                   >
                     {{ amenity }}
                   </span>
                   <span 
-                    *ngIf="listing.amenities.length > 3"
+                    *ngIf="(listing?.amenities?.length || 0) > 3"
                     class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"
                   >
-                    +{{ listing.amenities.length - 3 }} more
+                    +{{ (listing?.amenities?.length || 0) - 3 }} more
                   </span>
                 </div>
 
@@ -468,9 +468,9 @@
                   <div class="flex items-center space-x-2">
                     <div class="flex items-center">
                       <span class="text-yellow-400 mr-1">⭐</span>
-                      <span class="text-sm text-gray-600">{{ listing.landlord?.rating }}</span>
+                      <span class="text-sm text-gray-600">{{ listing?.landlord?.rating || 'N/A' }}</span>
                     </div>
-                    <span class="text-xs text-gray-500">• {{ listing.landlord?.name }}</span>
+                    <span class="text-xs text-gray-500">• {{ listing?.landlord?.name || 'Unknown' }}</span>
                   </div>
                   <div class="flex space-x-2">
                     <button class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm">
@@ -486,7 +486,7 @@
           </div>
 
           <!-- No Results -->
-          <div *ngIf="hasSearchedHousing && housingResults.length === 0" class="text-center py-12">
+          <div *ngIf="hasSearchedHousing && (housingResults?.length || 0) === 0" class="text-center py-12">
             <div class="text-6xl mb-4">🏠</div>
             <h4 class="text-lg font-medium text-gray-900 mb-2">No apartments found</h4>
             <p class="text-gray-600 mb-4">Try adjusting your search criteria or contact our support team for assistance.</p>
@@ -505,19 +505,19 @@
         </div>
 
         <!-- Featured Apartments (Default View) -->
-        <div *ngIf="!hasSearchedHousing && featuredListings.length > 0">
+        <div *ngIf="!hasSearchedHousing && (featuredListings?.length || 0) > 0">
           <h3 class="text-xl font-bold text-gray-900 mb-6">🌟 Featured Apartments</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div *ngFor="let listing of featuredListings" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 group">
               <div class="relative h-48 overflow-hidden">
                 <img 
-                  [src]="listing.images[0]" 
-                  [alt]="listing.title"
+                  [src]="listing?.images?.[0]" 
+                  [alt]="listing?.title"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 >
                 <div class="absolute top-4 left-4">
                   <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-                    ${{ listing.price }}/month
+                    ${{ listing?.price || 0 }}/month
                   </span>
                 </div>
                 <div class="absolute top-4 right-4">
@@ -528,21 +528,21 @@
               </div>
 
               <div class="p-6">
-                <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing.title }}</h4>
+                <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing?.title || 'Untitled' }}</h4>
                 <p class="text-gray-600 mb-3 flex items-center">
-                  📍 {{ listing.address }}
+                  📍 {{ listing?.address || 'Address not available' }}
                 </p>
                 
                 <div class="flex items-center space-x-4 mb-4 text-sm text-gray-600">
-                  <span>🛏️ {{ listing.bedrooms }} bed</span>
-                  <span>🚿 {{ listing.bathrooms }} bath</span>
-                  <span>📐 {{ listing.squareFeet }} sq ft</span>
+                  <span>🛏️ {{ listing?.bedrooms || 0 }} bed</span>
+                  <span>🚿 {{ listing?.bathrooms || 0 }} bath</span>
+                  <span>📐 {{ listing?.squareFeet || 0 }} sq ft</span>
                 </div>
 
                 <div class="flex justify-between items-center pt-4 border-t border-gray-200">
                   <div class="flex items-center space-x-2">
                     <span class="text-yellow-500">⭐</span>
-                    <span class="text-sm text-gray-600">{{ listing.landlord?.rating }}</span>
+                    <span class="text-sm text-gray-600">{{ listing?.landlord?.rating || 'N/A' }}</span>
                   </div>
                   <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
                     👁️ View Details
@@ -576,13 +576,13 @@
           <div *ngFor="let listing of featuredListings" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 group">
             <div class="relative h-48 overflow-hidden">
               <img 
-                [src]="listing.images[0]" 
-                [alt]="listing.title"
+                [src]="listing?.images?.[0]" 
+                [alt]="listing?.title"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               >
               <div class="absolute top-4 left-4">
                 <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-                  ${{ listing.price }}/month
+                  ${{ listing?.price || 0 }}/month
                 </span>
               </div>
               <div class="absolute top-4 right-4">
@@ -600,21 +600,21 @@
             </div>
 
             <div class="p-6">
-              <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing.title }}</h4>
+              <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing?.title || 'Untitled' }}</h4>
               <p class="text-gray-600 mb-3 flex items-center">
-                📍 {{ listing.address }}
+                📍 {{ listing?.address || 'Address not available' }}
               </p>
               
               <div class="flex items-center space-x-4 mb-4 text-sm text-gray-600">
-                <span>🛏️ {{ listing.bedrooms }} bed</span>
-                <span>🚿 {{ listing.bathrooms }} bath</span>
-                <span>📐 {{ listing.squareFeet }} sq ft</span>
+                <span>🛏️ {{ listing?.bedrooms || 0 }} bed</span>
+                <span>🚿 {{ listing?.bathrooms || 0 }} bath</span>
+                <span>📐 {{ listing?.squareFeet || 0 }} sq ft</span>
               </div>
 
               <div class="flex justify-between items-center pt-4 border-t border-gray-200">
                 <div class="flex items-center space-x-2">
                   <span class="text-yellow-500">⭐</span>
-                  <span class="text-sm text-gray-600">{{ listing.landlord?.rating }}</span>
+                  <span class="text-sm text-gray-600">{{ listing?.landlord?.rating || 'N/A' }}</span>
                 </div>
                 <div class="flex space-x-2">
                   <button class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm">
@@ -647,48 +647,48 @@
                 <div 
                   *ngFor="let profile of matchedProfiles" 
                   (click)="selectProfile(profile)"
-                  [class.bg-blue-50]="selectedProfile?.id === profile.id"
-                  [class.border-l-4]="selectedProfile?.id === profile.id"
-                  [class.border-blue-500]="selectedProfile?.id === profile.id"
+                  [class.bg-blue-50]="selectedProfile?.id === profile?.id"
+                  [class.border-l-4]="selectedProfile?.id === profile?.id"
+                  [class.border-blue-500]="selectedProfile?.id === profile?.id"
                   class="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-all"
                 >
                   <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center space-x-3">
                       <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {{ getInitials(profile.fullName) }}
+                        {{ getInitials(profile?.fullName) }}
                       </div>
                       <div>
-                        <h4 class="font-semibold text-gray-900">{{ profile.fullName }}</h4>
-                        <p class="text-xs text-gray-500">{{ profile.age }} • {{ profile.occupation }}</p>
+                        <h4 class="font-semibold text-gray-900">{{ profile?.fullName || 'Unknown' }}</h4>
+                        <p class="text-xs text-gray-500">{{ profile?.age || 'N/A' }} • {{ profile?.occupation || 'N/A' }}</p>
                       </div>
                     </div>
                     <div class="text-right">
-                      <div class="text-sm font-bold text-green-600">{{ profile.matchPercentage }}%</div>
+                      <div class="text-sm font-bold text-green-600">{{ profile?.matchPercentage || 0 }}%</div>
                       <div class="text-xs text-gray-500">match</div>
                     </div>
                   </div>
                   
-                  <div class="text-sm text-gray-600 mb-2">{{ profile.budgetRange }}</div>
+                  <div class="text-sm text-gray-600 mb-2">{{ profile?.budgetRange || 'N/A' }}</div>
                   
                   <div class="flex flex-wrap gap-1">
                     <span 
-                      *ngFor="let interest of profile.sharedInterests.slice(0, 2)" 
+                      *ngFor="let interest of profile?.sharedInterests?.slice(0, 2) || []" 
                       class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs"
                     >
                       {{ interest }}
                     </span>
                     <span 
-                      *ngIf="profile.sharedInterests.length > 2"
+                      *ngIf="(profile?.sharedInterests?.length || 0) > 2"
                       class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"
                     >
-                      +{{ profile.sharedInterests.length - 2 }}
+                      +{{ (profile?.sharedInterests?.length || 0) - 2 }}
                     </span>
                   </div>
                   
                   <!-- Show last message preview if exists -->
-                  <div *ngIf="getChatMessages(profile.id).length > 0" class="mt-2 pt-2 border-t border-gray-100">
+                  <div *ngIf="getChatMessages(profile?.id)?.length > 0" class="mt-2 pt-2 border-t border-gray-100">
                     <p class="text-xs text-gray-500 truncate">
-                      {{ getChatMessages(profile.id)[getChatMessages(profile.id).length - 1].content }}
+                      {{ getChatMessages(profile?.id)[getChatMessages(profile?.id).length - 1]?.content }}
                     </p>
                   </div>
                 </div>
@@ -702,7 +702,7 @@
               <div class="text-center text-gray-500 py-8">
                 <div class="text-4xl mb-4">👥</div>
                 <p class="text-lg font-medium mb-2">Select a matched profile to start chatting</p>
-                <p class="text-sm">Choose from {{ matchedProfiles.length }} compatible roommate matches</p>
+                <p class="text-sm">Choose from {{ matchedProfiles?.length || 0 }} compatible roommate matches</p>
               </div>
             </div>
             
@@ -712,11 +712,11 @@
                 <div class="flex items-center justify-between">
                   <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
-                      {{ getInitials(selectedProfile.fullName) }}
+                      {{ getInitials(selectedProfile?.fullName) }}
                     </div>
                     <div>
-                      <h3 class="font-semibold text-gray-900">{{ selectedProfile.fullName }}</h3>
-                      <p class="text-sm text-gray-600">{{ selectedProfile.matchPercentage }}% match • {{ selectedProfile.occupation }}</p>
+                      <h3 class="font-semibold text-gray-900">{{ selectedProfile?.fullName || 'Unknown' }}</h3>
+                      <p class="text-sm text-gray-600">{{ selectedProfile?.matchPercentage || 0 }}% match • {{ selectedProfile?.occupation || 'N/A' }}</p>
                     </div>
                   </div>
                   <div class="flex items-center space-x-2">
@@ -734,18 +734,18 @@
                   <div class="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span class="text-gray-600">Budget:</span>
-                      <span class="font-medium ml-1">{{ selectedProfile.budgetRange }}</span>
+                      <span class="font-medium ml-1">{{ selectedProfile?.budgetRange || 'N/A' }}</span>
                     </div>
                     <div>
                       <span class="text-gray-600">Location:</span>
-                      <span class="font-medium ml-1">{{ selectedProfile.locationPreference }}</span>
+                      <span class="font-medium ml-1">{{ selectedProfile?.locationPreference || 'N/A' }}</span>
                     </div>
                   </div>
                   <div class="mt-2">
                     <span class="text-gray-600">Shared Interests:</span>
                     <div class="flex flex-wrap gap-1 mt-1">
                       <span 
-                        *ngFor="let interest of selectedProfile.sharedInterests.slice(0, 4)" 
+                        *ngFor="let interest of selectedProfile?.sharedInterests?.slice(0, 4) || []" 
                         class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs"
                       >
                         {{ interest }}
@@ -760,33 +760,33 @@
                 <!-- Match notification -->
                 <div class="text-center">
                   <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm inline-block">
-                    🎉 You matched with {{ selectedProfile.fullName }}! Start the conversation.
+                    🎉 You matched with {{ selectedProfile?.fullName || 'this user' }}! Start the conversation.
                   </div>
                 </div>
                 
                 <!-- Chat messages -->
-                <div *ngFor="let message of getChatMessages(selectedProfile.id)" class="flex" [class.justify-end]="message.isOwn">
-                  <div class="flex items-end space-x-2 max-w-xs lg:max-w-md" [class.flex-row-reverse]="message.isOwn" [class.space-x-reverse]="message.isOwn">
+                <div *ngFor="let message of getChatMessages(selectedProfile?.id) || []" class="flex" [class.justify-end]="message?.isOwn">
+                  <div class="flex items-end space-x-2 max-w-xs lg:max-w-md" [class.flex-row-reverse]="message?.isOwn" [class.space-x-reverse]="message?.isOwn">
                     <div 
-                      *ngIf="!message.isOwn"
+                      *ngIf="!message?.isOwn"
                       class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                     >
-                      {{ getInitials(selectedProfile.fullName) }}
+                      {{ getInitials(selectedProfile?.fullName) }}
                     </div>
                     <div 
-                      [class.bg-blue-500]="message.isOwn"
-                      [class.text-white]="message.isOwn"
-                      [class.bg-white]="!message.isOwn"
-                      [class.text-gray-900]="!message.isOwn"
+                      [class.bg-blue-500]="message?.isOwn"
+                      [class.text-white]="message?.isOwn"
+                      [class.bg-white]="!message?.isOwn"
+                      [class.text-gray-900]="!message?.isOwn"
                       class="px-4 py-2 rounded-lg shadow-sm"
                     >
-                      <p class="text-sm">{{ message.content }}</p>
+                      <p class="text-sm">{{ message?.content || '' }}</p>
                       <p class="text-xs mt-1 opacity-70">
-                        {{ message.timestamp | date:'short' }}
+                        {{ message?.timestamp | date:'short' }}
                       </p>
                     </div>
                     <div 
-                      *ngIf="message.isOwn"
+                      *ngIf="message?.isOwn"
                       class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                     >
                       {{ getInitials(currentUser?.fullName) }}
@@ -797,7 +797,7 @@
                 <!-- Typing indicator (optional) -->
                 <div *ngIf="isTyping" class="flex items-center space-x-2">
                   <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                    {{ getInitials(selectedProfile.fullName) }}
+                    {{ getInitials(selectedProfile?.fullName) }}
                   </div>
                   <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
                     <div class="flex space-x-1">
@@ -831,7 +831,7 @@
                   </button>
                   <button 
                     (click)="sendMessage()"
-                    [disabled]="!newMessage.trim()"
+                    [disabled]="!newMessage?.trim()"
                     class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -861,18 +861,18 @@
               <div class="space-y-2">
                 <!-- Active conversations -->
                 <div 
-                  *ngFor="let profile of matchedProfiles.slice(0, 3)" 
+                  *ngFor="let profile of matchedProfiles?.slice(0, 3) || []" 
                   (click)="selectProfile(profile); activeTab = 'matches'"
                   class="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-all border-l-4 border-transparent hover:border-blue-500"
                 >
                   <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center space-x-3">
                       <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {{ getInitials(profile.fullName) }}
+                        {{ getInitials(profile?.fullName) }}
                       </div>
                       <div>
-                        <h4 class="font-semibold text-gray-900">{{ profile.fullName }}</h4>
-                        <p class="text-xs text-gray-500">{{ profile.occupation }}</p>
+                        <h4 class="font-semibold text-gray-900">{{ profile?.fullName || 'Unknown' }}</h4>
+                        <p class="text-xs text-gray-500">{{ profile?.occupation || 'N/A' }}</p>
                       </div>
                     </div>
                     <div class="text-right">
@@ -882,7 +882,7 @@
                   </div>
                   
                   <p class="text-sm text-gray-600 truncate">
-                    {{ getChatMessages(profile.id).length > 0 ? getChatMessages(profile.id)[getChatMessages(profile.id).length - 1].content : 'Start a conversation...' }}
+                    {{ getChatMessages(profile?.id)?.length > 0 ? getChatMessages(profile?.id)[getChatMessages(profile?.id).length - 1]?.content : 'Start a conversation...' }}
                   </p>
                 </div>
               </div>
@@ -1069,7 +1069,7 @@
               <!-- Profile Matches -->
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600">Profile Matches</span>
-                <span class="text-sm font-medium text-green-600">{{ matchedProfiles.length }}</span>
+                <span class="text-sm font-medium text-green-600">{{ matchedProfiles?.length || 0 }}</span>
               </div>
 
               <!-- Apartments Saved -->
