@@ -215,7 +215,7 @@
 
       <!-- Roommate Match Swipe UI -->
       <div *ngIf="activeTab === 'home'" class="mb-12">
-        <div *ngIf="potentialMatches?.length > 0; else noMatches" class="flex flex-col items-center">
+        <div *ngIf="potentialMatches.length > 0; else noMatches" class="flex flex-col items-center">
           <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg mb-4">
             <ng-container *ngIf="potentialMatches[currentMatchIndex] as match">
               <div class="flex items-center space-x-4 mb-4">
@@ -378,7 +378,7 @@
         </form>
 
         <!-- Apartment Results -->
-        <div *ngIf="housingResults?.length > 0 || hasSearchedHousing">
+        <div *ngIf="housingResults.length > 0 || hasSearchedHousing">
           <div class="flex justify-between items-center mb-6">
             <div>
               <h3 class="text-xl font-bold text-gray-900">Search Results</h3>
