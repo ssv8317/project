@@ -266,13 +266,13 @@
           </div>
 
           <!-- Match Cards -->
-          <div *ngIf="!isLoadingMatches && getCurrentMatch()" class="max-w-sm mx-auto">
+          <div *ngIf="!isLoadingMatches && getCurrentMatch() as currentMatch" class="max-w-sm mx-auto">
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
               <!-- Profile Image Placeholder -->
               <div class="h-64 bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
                 <div class="bg-white w-20 h-20 rounded-full flex items-center justify-center">
                   <span class="text-2xl font-bold text-primary-500">
-                    {{ getInitials(getCurrentMatch()?.profile.displayName) }}
+                    {{ getInitials(currentMatch.profile.displayName) }}
                   </span>
                 </div>
               </div>
@@ -281,12 +281,12 @@
               <div class="p-6">
                 <div class="flex justify-between items-start mb-4">
                   <div>
-                    <h3 class="text-xl font-bold text-gray-900">{{ getCurrentMatch()?.profile.displayName }}</h3>
-                    <p class="text-gray-600">{{ getCurrentMatch()?.profile.age }} • {{ getCurrentMatch()?.profile.occupation }}</p>
+                    <h3 class="text-xl font-bold text-gray-900">{{ currentMatch.profile.displayName }}</h3>
+                    <p class="text-gray-600">{{ currentMatch.profile.age }} • {{ currentMatch.profile.occupation }}</p>
                   </div>
                   <div class="text-right">
                     <div class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">
-                      {{ getCurrentMatch()?.compatibilityScore }}% Match
+                      {{ currentMatch.compatibilityScore }}% Match
                     </div>
                   </div>
                 </div>
@@ -294,27 +294,27 @@
                 <div class="space-y-3 mb-6">
                   <div>
                     <span class="text-sm font-medium text-gray-700">Budget:</span>
-                    <span class="text-sm text-gray-600 ml-2">${{ getCurrentMatch()?.profile.budgetMin }} - ${{ getCurrentMatch()?.profile.budgetMax }}</span>
+                    <span class="text-sm text-gray-600 ml-2">${{ currentMatch.profile.budgetMin }} - ${{ currentMatch.profile.budgetMax }}</span>
                   </div>
                   <div>
                     <span class="text-sm font-medium text-gray-700">Location:</span>
-                    <span class="text-sm text-gray-600 ml-2">{{ getCurrentMatch()?.profile.preferredLocations.join(', ') }}</span>
+                    <span class="text-sm text-gray-600 ml-2">{{ currentMatch.profile.preferredLocations.join(', ') }}</span>
                   </div>
                   <div>
                     <span class="text-sm font-medium text-gray-700">Lifestyle:</span>
-                    <span class="text-sm text-gray-600 ml-2">{{ getCurrentMatch()?.profile.sleepSchedule }}, {{ getCurrentMatch()?.profile.cleanlinessLevel }} cleanliness</span>
+                    <span class="text-sm text-gray-600 ml-2">{{ currentMatch.profile.sleepSchedule }}, {{ currentMatch.profile.cleanlinessLevel }} cleanliness</span>
                   </div>
                 </div>
 
                 <div class="mb-6">
-                  <p class="text-sm text-gray-700">{{ getCurrentMatch()?.profile.bio }}</p>
+                  <p class="text-sm text-gray-700">{{ currentMatch.profile.bio }}</p>
                 </div>
 
                 <!-- Shared Interests -->
-                <div *ngIf="getCurrentMatch()?.sharedInterests.length" class="mb-6">
+                <div *ngIf="currentMatch.sharedInterests.length" class="mb-6">
                   <h4 class="text-sm font-medium text-gray-700 mb-2">Shared Interests</h4>
                   <div class="flex flex-wrap gap-2">
-                    <span *ngFor="let interest of getCurrentMatch()?.sharedInterests" 
+                    <span *ngFor="let interest of currentMatch.sharedInterests" 
                           class="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs">
                       {{ interest }}
                     </span>
