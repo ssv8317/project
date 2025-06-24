@@ -400,7 +400,7 @@
           </div>
 
           <!-- Apartment Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="housingResults?.length > 0">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="housingResults.length > 0">
             <div *ngFor="let listing of housingResults" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 group">
               <div class="relative h-48 overflow-hidden">
                 <img 
@@ -686,9 +686,9 @@
                   </div>
                   
                   <!-- Show last message preview if exists -->
-                  <div *ngIf="getChatMessages(profile?.id)?.length > 0" class="mt-2 pt-2 border-t border-gray-100">
+                  <div *ngIf="getChatMessages(profile?.id ?? '').length > 0" class="mt-2 pt-2 border-t border-gray-100">
                     <p class="text-xs text-gray-500 truncate">
-                      {{ getChatMessages(profile?.id)[getChatMessages(profile?.id).length - 1]?.content }}
+                      {{ getChatMessages(profile?.id ?? '')[getChatMessages(profile?.id ?? '').length - 1]?.content }}
                     </p>
                   </div>
                 </div>
@@ -765,7 +765,7 @@
                 </div>
                 
                 <!-- Chat messages -->
-                <div *ngFor="let message of getChatMessages(selectedProfile?.id) || []" class="flex" [class.justify-end]="message?.isOwn">
+                <div *ngFor="let message of getChatMessages(selectedProfile?.id ?? '') || []" class="flex" [class.justify-end]="message?.isOwn">
                   <div class="flex items-end space-x-2 max-w-xs lg:max-w-md" [class.flex-row-reverse]="message?.isOwn" [class.space-x-reverse]="message?.isOwn">
                     <div 
                       *ngIf="!message?.isOwn"
@@ -882,7 +882,7 @@
                   </div>
                   
                   <p class="text-sm text-gray-600 truncate">
-                    {{ getChatMessages(profile?.id)?.length > 0 ? getChatMessages(profile?.id)[getChatMessages(profile?.id).length - 1]?.content : 'Start a conversation...' }}
+                    {{ getChatMessages(profile?.id ?? '').length > 0 ? getChatMessages(profile?.id ?? '')[getChatMessages(profile?.id ?? '').length - 1]?.content : 'Start a conversation...' }}
                   </p>
                 </div>
               </div>
