@@ -5,22 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { HousingService } from '../../services/housing.service';
+import { MatchService } from '../../services/match.service';
 import { User } from '../../models/user.model';
 import { HousingListing, SearchFilters } from '../../models/housing.model';
-
-// Matched Profile Interface
-export interface MatchedProfile {
-  id: string;
-  fullName: string;
-  age: number;
-  occupation: string;
-  budgetRange: string;
-  locationPreference: string;
-  matchPercentage: number;
-  sharedInterests: string[];
-  profileImage?: string;
-  lastActive: Date;
-}
+import { MatchResponse, RoommateProfile, UserAction } from '../../models/match.model';
 
 // Chat Message Interface
 export interface ChatMessage {
@@ -43,10 +31,14 @@ export type TabType = 'home' | 'apartments' | 'saved' | 'matches' | 'messages' |
 })
 export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
+  userProfile: RoommateProfile | null = null;
+  hasProfile = false;
+  isCheckingProfile = true;
+  
   zipForm: FormGroup;
   housingSearchForm: FormGroup;
   
-  // Tab management - updated to use the TabType
+  // Tab management
   public activeTab: TabType = 'home';
   public mobileMenuOpen = false;
   
@@ -56,9 +48,14 @@ export class DashboardComponent implements OnInit {
   isSearchingHousing = false;
   hasSearchedHousing = false;
   
-  // Matched Profiles properties
-  matchedProfiles: MatchedProfile[] = [];
-  selectedProfile: MatchedProfile | null = null;
+  // Roommate matching properties
+  potentialMatches: MatchResponse[] = [];
+  confirmedMatches: MatchResponse[] = [];
+  currentMatchIndex = 0;
+  isLoadingMatches = false;
+  
+  // Chat properties
+  selectedMatch: MatchResponse | null = null;
   newMessage = '';
   chatMessages: ChatMessage[] = [];
   public isTyping = false;
@@ -73,6 +70,7 @@ export class DashboardComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private housingService: HousingService,
+    private matchService: MatchService,
     private router: Router
   ) {
     // Legacy roommate search form
@@ -80,7 +78,7 @@ export class DashboardComponent implements OnInit {
       zipCode: ['', [Validators.required, Validators.pattern(/^\d{5}$/)]]
     });
 
-    // New housing search form
+    // Housing search form
     this.housingSearchForm = this.fb.group({
       zipCode: ['', [Validators.pattern(/^\d{5}$/)]],
       maxPrice: [''],
@@ -94,50 +92,53 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCurrentUser();
-    this.loadFeaturedListings();
-    this.loadMatchedProfiles();
-    this.initializeChatMessages();
   }
 
   private loadCurrentUser(): void {
-    // Get user from localStorage first
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      try {
-        this.currentUser = JSON.parse(userStr);
-        console.log('User loaded from localStorage:', this.currentUser);
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-      }
-    }
-
-    // Also try from AuthService
-    if (this.authService.currentUser$) {
-      this.authService.currentUser$.subscribe({
-        next: (user) => {
-          if (user) {
-            this.currentUser = user;
-            console.log('User loaded from AuthService:', this.currentUser);
-          }
-        },
-        error: (error) => {
-          console.error('Error getting user from AuthService:', error);
-        }
-      });
-    }
-
-    // Try to get fresh user data from backend (will work when backend is ready)
-    this.authService.getCurrentUser().subscribe({
+    this.authService.currentUser$.subscribe({
       next: (user) => {
         if (user) {
           this.currentUser = user;
-          console.log('Fresh user data loaded:', user);
+          this.checkUserProfile();
+        } else {
+          this.router.navigate(['/login']);
         }
       },
       error: (error) => {
-        console.log('Backend not ready yet for fresh user data:', error);
+        console.error('Error loading user:', error);
+        this.router.navigate(['/login']);
       }
     });
+  }
+
+  private checkUserProfile(): void {
+    if (!this.currentUser?.id) return;
+
+    this.isCheckingProfile = true;
+    
+    this.matchService.checkUserProfile(this.currentUser.id).subscribe({
+      next: (response) => {
+        this.hasProfile = response.hasProfile;
+        this.userProfile = response.profile || null;
+        this.isCheckingProfile = false;
+        
+        if (this.hasProfile) {
+          this.loadDashboardData();
+        }
+      },
+      error: (error) => {
+        console.error('Error checking profile:', error);
+        this.hasProfile = false;
+        this.isCheckingProfile = false;
+      }
+    });
+  }
+
+  private loadDashboardData(): void {
+    this.loadFeaturedListings();
+    this.loadPotentialMatches();
+    this.loadConfirmedMatches();
+    this.initializeChatMessages();
   }
 
   private loadFeaturedListings(): void {
@@ -151,132 +152,148 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  private loadMatchedProfiles(): void {
-    // Mock matched profiles based on user preferences
-    this.matchedProfiles = [
-      {
-        id: '1',
-        fullName: 'Sarah Johnson',
-        age: 24,
-        occupation: 'Graphic Designer',
-        budgetRange: '$1000-1400/month',
-        locationPreference: 'Downtown',
-        matchPercentage: 92,
-        sharedInterests: ['Clean Living', 'Night Owl', 'Pet Friendly', 'Downtown Location'],
-        lastActive: new Date()
+  private loadPotentialMatches(): void {
+    if (!this.currentUser?.id) return;
+
+    this.isLoadingMatches = true;
+    this.matchService.getPotentialMatches(this.currentUser.id).subscribe({
+      next: (matches) => {
+        this.potentialMatches = matches;
+        this.isLoadingMatches = false;
       },
-      {
-        id: '2',
-        fullName: 'Mike Chen',
-        age: 26,
-        occupation: 'Software Engineer',
-        budgetRange: '$1200-1600/month',
-        locationPreference: 'Tech District',
-        matchPercentage: 88,
-        sharedInterests: ['Tech Industry', 'Clean Living', 'Gym Access', 'Quiet Environment'],
-        lastActive: new Date()
-      },
-      {
-        id: '3',
-        fullName: 'Emma Davis',
-        age: 23,
-        occupation: 'Marketing Specialist',
-        budgetRange: '$900-1300/month',
-        locationPreference: 'Near Campus',
-        matchPercentage: 85,
-        sharedInterests: ['Young Professional', 'Social', 'Budget Conscious', 'Near Transit'],
-        lastActive: new Date()
-      },
-      {
-        id: '4',
-        fullName: 'Alex Rodriguez',
-        age: 25,
-        occupation: 'Data Analyst',
-        budgetRange: '$1100-1500/month',
-        locationPreference: 'Midtown',
-        matchPercentage: 82,
-        sharedInterests: ['Professional', 'Clean Living', 'Fitness', 'Work-Life Balance'],
-        lastActive: new Date()
-      },
-      {
-        id: '5',
-        fullName: 'Jessica Kim',
-        age: 27,
-        occupation: 'UX Designer',
-        budgetRange: '$1300-1700/month',
-        locationPreference: 'Arts District',
-        matchPercentage: 79,
-        sharedInterests: ['Creative Field', 'Modern Living', 'Art & Culture', 'Professional'],
-        lastActive: new Date()
+      error: (error) => {
+        console.error('Error loading potential matches:', error);
+        this.isLoadingMatches = false;
       }
-    ];
+    });
+  }
+
+  private loadConfirmedMatches(): void {
+    if (!this.currentUser?.id) return;
+
+    this.matchService.getMatches(this.currentUser.id).subscribe({
+      next: (matches) => {
+        this.confirmedMatches = matches;
+      },
+      error: (error) => {
+        console.error('Error loading confirmed matches:', error);
+      }
+    });
   }
 
   private initializeChatMessages(): void {
-    // Initialize sample chat messages for each profile
-    this.chatMessages = [
-      {
-        id: '1',
-        profileId: '1',
-        text: 'Hi! I saw we matched based on our apartment preferences. Are you still looking for a roommate?',
-        isOwn: false,
-        timestamp: new Date(Date.now() - 3600000) // 1 hour ago
-      },
-      {
-        id: '2',
-        profileId: '1',
-        text: 'Yes! I love that we both prefer downtown and are okay with pets. Have you found any good apartments yet?',
-        isOwn: true,
-        timestamp: new Date(Date.now() - 3000000) // 50 minutes ago
-      },
-      {
-        id: '3',
-        profileId: '2',
-        text: 'Hey! Fellow software engineer here. I noticed we have similar budgets and both work in tech. Want to chat about potential apartments?',
-        isOwn: false,
-        timestamp: new Date(Date.now() - 7200000) // 2 hours ago
-      },
-      {
-        id: '4',
-        profileId: '2',
-        text: 'Absolutely! I\'ve been looking at some places in the tech district. Would love to share some listings with you.',
-        isOwn: true,
-        timestamp: new Date(Date.now() - 6900000) // 1 hour 55 minutes ago
-      },
-      {
-        id: '5',
-        profileId: '3',
-        text: 'Hi there! I see we\'re both looking for places near campus. I\'m a marketing specialist and love the social aspect of shared living!',
-        isOwn: false,
-        timestamp: new Date(Date.now() - 10800000) // 3 hours ago
-      }
-    ];
+    // Initialize sample chat messages for confirmed matches
+    this.chatMessages = this.confirmedMatches.map((match, index) => ({
+      id: `${index + 1}`,
+      profileId: match.id,
+      text: `Hi! I saw we matched based on our preferences. Are you still looking for a roommate?`,
+      isOwn: false,
+      timestamp: new Date(Date.now() - (index + 1) * 3600000)
+    }));
   }
 
-  getInitials(fullName?: string): string {
-    if (!fullName) return 'U';
-    return fullName.split(' ')
-      .map(name => name.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
+  // Profile setup navigation
+  goToProfileSetup(): void {
+    this.router.navigate(['/profile-setup']);
   }
 
-  // Matched Profiles methods
-  selectProfile(profile: MatchedProfile): void {
-    this.selectedProfile = profile;
+  // Roommate matching methods
+  getCurrentMatch(): MatchResponse | null {
+    return this.potentialMatches[this.currentMatchIndex] || null;
   }
 
-  getChatMessages(profileId: string): ChatMessage[] {
-    return this.chatMessages.filter(msg => msg.profileId === profileId);
+  swipeLeft(): void {
+    const currentMatch = this.getCurrentMatch();
+    if (currentMatch && this.currentUser?.id) {
+      this.matchService.swipe(this.currentUser.id, {
+        targetUserId: currentMatch.profile.userId,
+        action: UserAction.Pass
+      }).subscribe({
+        next: () => {
+          this.nextMatch();
+        },
+        error: (error) => {
+          console.error('Error swiping left:', error);
+          this.nextMatch(); // Continue even if API fails
+        }
+      });
+    }
+  }
+
+  swipeRight(): void {
+    const currentMatch = this.getCurrentMatch();
+    if (currentMatch && this.currentUser?.id) {
+      this.matchService.swipe(this.currentUser.id, {
+        targetUserId: currentMatch.profile.userId,
+        action: UserAction.Like
+      }).subscribe({
+        next: (response) => {
+          if (response.isMatched) {
+            // It's a match! Add to confirmed matches
+            this.confirmedMatches.unshift(response);
+            this.showMatchNotification(response);
+          }
+          this.nextMatch();
+        },
+        error: (error) => {
+          console.error('Error swiping right:', error);
+          this.nextMatch(); // Continue even if API fails
+        }
+      });
+    }
+  }
+
+  superLike(): void {
+    const currentMatch = this.getCurrentMatch();
+    if (currentMatch && this.currentUser?.id) {
+      this.matchService.swipe(this.currentUser.id, {
+        targetUserId: currentMatch.profile.userId,
+        action: UserAction.SuperLike
+      }).subscribe({
+        next: (response) => {
+          if (response.isMatched) {
+            this.confirmedMatches.unshift(response);
+            this.showMatchNotification(response);
+          }
+          this.nextMatch();
+        },
+        error: (error) => {
+          console.error('Error super liking:', error);
+          this.nextMatch();
+        }
+      });
+    }
+  }
+
+  private nextMatch(): void {
+    this.currentMatchIndex++;
+    if (this.currentMatchIndex >= this.potentialMatches.length) {
+      // Load more matches or show "no more matches" message
+      this.loadPotentialMatches();
+      this.currentMatchIndex = 0;
+    }
+  }
+
+  private showMatchNotification(match: MatchResponse): void {
+    // You can implement a toast notification or modal here
+    console.log('New match!', match.profile.displayName);
+  }
+
+  // Chat methods
+  selectMatch(match: MatchResponse): void {
+    this.selectedMatch = match;
+  }
+
+  getChatMessages(matchId: string): ChatMessage[] {
+    return this.chatMessages.filter(msg => msg.profileId === matchId);
   }
 
   sendMessage(): void {
-    if (!this.newMessage.trim() || !this.selectedProfile) return;
+    if (!this.newMessage.trim() || !this.selectedMatch) return;
 
     const message: ChatMessage = {
       id: Date.now().toString(),
-      profileId: this.selectedProfile.id,
+      profileId: this.selectedMatch.id,
       text: this.newMessage.trim(),
       isOwn: true,
       timestamp: new Date()
@@ -297,24 +314,19 @@ export class DashboardComponent implements OnInit {
         "I'm definitely interested. When would be a good time to meet?",
         "Perfect! I was thinking the same thing.",
         "That apartment looks amazing! Should we schedule a viewing?",
-        "I agree! Let's definitely discuss this further.",
-        "Awesome! I think we'd make great roommates.",
-        "That's exactly what I was looking for too!",
-        "I love your enthusiasm! Let's make this happen.",
-        "Great idea! I'm excited to move forward with this.",
-        "That works perfectly for me. What's the next step?"
+        "I agree! Let's definitely discuss this further."
       ];
       
       const responseMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        profileId: this.selectedProfile!.id,
+        profileId: this.selectedMatch!.id,
         text: responses[Math.floor(Math.random() * responses.length)],
         isOwn: false,
         timestamp: new Date()
       };
       
       this.chatMessages.push(responseMessage);
-    }, 1000 + Math.random() * 2000); // Random delay between 1-3 seconds
+    }, 1000 + Math.random() * 2000);
   }
 
   // Housing search methods
@@ -334,7 +346,6 @@ export class DashboardComponent implements OnInit {
       sortOrder: 'desc'
     };
 
-    // Add amenities based on checkboxes
     if (formValue.parking) filters.amenities?.push('Parking');
     if (formValue.gym) filters.amenities?.push('Gym');
 
@@ -381,6 +392,16 @@ export class DashboardComponent implements OnInit {
     };
   }
 
+  // Utility methods
+  getInitials(fullName?: string): string {
+    if (!fullName) return 'U';
+    return fullName.split(' ')
+      .map(name => name.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
   // Legacy roommate search methods (keeping for backward compatibility)
   searchRoommates(): void {
     if (this.zipForm.valid) {
@@ -391,11 +412,10 @@ export class DashboardComponent implements OnInit {
       const zipCode = this.zipForm.get('zipCode')?.value;
       console.log('Searching for roommates in ZIP:', zipCode);
       
-      // Simulate search
       setTimeout(() => {
         this.matches = [];
         this.isSearching = false;
-        this.errorMessage = 'Roommate search functionality will be added in future updates.';
+        this.errorMessage = 'Please complete your roommate profile to see matches.';
       }, 1000);
     }
   }
