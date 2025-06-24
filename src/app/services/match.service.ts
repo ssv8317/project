@@ -258,7 +258,7 @@ export class MatchService {
   // Swipe on a profile
   swipe(userId: string, request: SwipeRequest): Observable<MatchResponse> {
     // Find the match being swiped on
-    const mockMatches = [
+    const mockMatches: MatchResponse[] = [
       {
         id: 'match-1',
         profile: {
@@ -282,7 +282,7 @@ export class MatchService {
           isActive: true,
           createdAt: new Date(),
           updatedAt: new Date()
-        },
+        } as RoommateProfile,
         compatibilityScore: 92,
         sharedInterests: ['Clean Living', 'Night Owl', 'Pet Friendly'],
         isMatched: request.action === UserAction.Like || request.action === UserAction.SuperLike,
