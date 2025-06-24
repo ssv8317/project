@@ -152,7 +152,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  private loadPotentialMatches(): void {
+  public loadPotentialMatches(): void {
     if (!this.currentUser?.id) return;
 
     this.isLoadingMatches = true;
