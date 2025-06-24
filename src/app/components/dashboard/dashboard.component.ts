@@ -43,6 +43,7 @@ export class DashboardComponent implements OnInit {
   userMatches: MatchResponse[] = [];
   currentMatchIndex = 0;
   isLoadingMatches = false;
+  isLoadingUserMatches = false;
   showMatchModal = false;
   newMatch: MatchResponse | null = null;
 
@@ -278,17 +279,23 @@ export class DashboardComponent implements OnInit {
   loadUserMatches(): void {
     if (this.currentUser?.id) {
       console.log('💑 Loading user matches for:', this.currentUser.id);
+      this.isLoadingUserMatches = true;
       this.matchService.getMatches(this.currentUser.id).subscribe({
         next: (matches: MatchResponse[]) => {
           console.log('✅ User matches loaded:', matches);
           this.userMatches = matches;
+          this.matchedProfiles = matches; // Also update matchedProfiles for template
+          this.isLoadingUserMatches = false;
         },
         error: (error: any) => {
           console.error('❌ Error loading matches:', error);
+          this.isLoadingUserMatches = false;
         }
       });
     }
   }
+
+  // --- END MATCHING SYSTEM METHODS ---
 
   // --- MESSAGING METHODS ---
 

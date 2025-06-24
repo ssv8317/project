@@ -101,15 +101,19 @@ export class MatchService {
     }
   ];
 
-  private swipeHistory: { [userId: string]: string[] } = {};
+  private swipeHistory: { [userId: string]: string[] } = {
+    '1': ['4'] // John has swiped on Emma Wilson
+  };
   
-  // Pre-populate matches for John Doe (user ID '1')
+  // Pre-populate matches for John Doe (user ID '1') - he's matched with Sarah Chen and Mike Rodriguez
   private matches: { [userId: string]: string[] } = {
-    '1': ['2', '3'] // John is matched with Sarah Chen and Mike Rodriguez
+    '1': ['2', '3'] // John is matched with Sarah Chen (profile id '2') and Mike Rodriguez (profile id '3')
   };
 
   constructor(private http: HttpClient) {
-    console.log('🎯 MatchService initialized with pre-existing matches:', this.matches);
+    console.log('🎯 MatchService initialized');
+    console.log('📊 Pre-existing matches for John Doe (user 1):', this.matches['1']);
+    console.log('👥 Available profiles:', this.mockProfiles.map(p => ({ id: p.id, name: p.displayName })));
   }
 
   getPotentialMatches(userId: string): Observable<MatchResponse[]> {
@@ -122,10 +126,14 @@ export class MatchService {
         const matchedProfiles = this.matches[userId] || [];
         const excludedProfiles = [...swipedProfiles, ...matchedProfiles];
         
+        console.log('🚫 Excluded profiles (swiped + matched):', excludedProfiles);
+        
         const availableProfiles = this.mockProfiles.filter(p => 
           p.userId !== userId && 
           !excludedProfiles.includes(p.id)
         );
+
+        console.log('✅ Available profiles for swiping:', availableProfiles.map(p => ({ id: p.id, name: p.displayName })));
 
         // Convert to MatchResponse format with mock compatibility scores
         const matchResponses: MatchResponse[] = availableProfiles.map(profile => ({
@@ -135,7 +143,7 @@ export class MatchService {
           isNewMatch: false
         }));
 
-        console.log(`✅ Found ${matchResponses.length} potential matches`);
+        console.log(`✅ Found ${matchResponses.length} potential matches for user ${userId}`);
         observer.next(matchResponses.sort((a, b) => b.compatibilityScore - a.compatibilityScore));
         observer.complete();
       }, 1000);
@@ -168,7 +176,7 @@ export class MatchService {
             this.matches[userId] = [];
           }
           this.matches[userId].push(request.profileId);
-          console.log('🎉 New match created!');
+          console.log('🎉 New match created! Updated matches:', this.matches[userId]);
         }
 
         const response: MatchResponse = {
@@ -191,10 +199,10 @@ export class MatchService {
     return new Observable(observer => {
       setTimeout(() => {
         const userMatches = this.matches[userId] || [];
-        console.log(`👤 User ${userId} has matches:`, userMatches);
+        console.log(`👤 User ${userId} has match profile IDs:`, userMatches);
         
         const matchedProfiles = this.mockProfiles.filter(p => userMatches.includes(p.id));
-        console.log('🔍 Found matched profiles:', matchedProfiles);
+        console.log('🔍 Found matched profiles:', matchedProfiles.map(p => ({ id: p.id, name: p.displayName })));
         
         const matchResponses: MatchResponse[] = matchedProfiles.map(profile => ({
           id: profile.id,
@@ -203,7 +211,7 @@ export class MatchService {
           isNewMatch: false
         }));
 
-        console.log(`✅ Returning ${matchResponses.length} matches for user ${userId}`);
+        console.log(`✅ Returning ${matchResponses.length} matches for user ${userId}:`, matchResponses.map(m => m.profile.displayName));
         observer.next(matchResponses);
         observer.complete();
       }, 800);
