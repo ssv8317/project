@@ -71,7 +71,14 @@ import { AuthService } from '../../services/auth.service';
             </div>
 
             <div *ngIf="errorMessage" class="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p class="text-red-600 text-sm">{{ errorMessage }}</p>
+              <p class="text-red-600 text-sm">{{ getErrorMessage() }}</p>
+            </div>
+
+            <!-- Demo Credentials Info -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p class="text-blue-800 text-sm font-medium mb-2">Demo Login:</p>
+              <p class="text-blue-700 text-xs">Email: john.doe@example.com</p>
+              <p class="text-blue-700 text-xs">Password: Any password</p>
             </div>
 
             <div>
@@ -126,9 +133,22 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorMessage = error.error?.message || 'Login failed. Please check your credentials.';
+          this.errorMessage = error.error?.message || error.message || 'LOGIN_FAILED';
         }
       });
     }
+  }
+
+  getErrorMessage(): string {
+    if (this.errorMessage.includes('CONNECTION_ERROR') || this.errorMessage.includes('Http failure')) {
+      return 'Unable to connect to server. Using demo mode - try logging in with john.doe@example.com and any password.';
+    }
+    if (this.errorMessage === 'LOGIN_FAILED') {
+      return 'Invalid email or password. For demo, use: john.doe@example.com with any password.';
+    }
+    if (this.errorMessage.includes('Invalid email or password')) {
+      return 'Invalid credentials. For demo, use: john.doe@example.com with any password.';
+    }
+    return this.errorMessage;
   }
 }
