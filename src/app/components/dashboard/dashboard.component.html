@@ -1,1095 +1,725 @@
 <div class="min-h-screen bg-gray-50">
-  <!-- Professional Header -->
-  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center space-x-4">
-          <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-xl shadow-md">
-            HM
+  <!-- Mobile Menu Button -->
+  <div class="lg:hidden bg-white shadow-sm border-b border-gray-200 p-4">
+    <button 
+      (click)="mobileMenuOpen = !mobileMenuOpen"
+      class="flex items-center space-x-2 text-gray-600 hover:text-gray-800"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+      <span class="font-medium">Menu</span>
+    </button>
+  </div>
+
+  <div class="flex">
+    <!-- Sidebar -->
+    <div class="w-64 bg-white shadow-lg h-screen fixed lg:relative lg:block" 
+         [class.hidden]="!mobileMenuOpen"
+         [class.block]="mobileMenuOpen">
+      <!-- Logo -->
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex items-center">
+          <div class="bg-primary-500 text-white px-3 py-1 rounded-lg font-bold text-xl">HM</div>
+          <span class="ml-2 text-xl font-bold text-gray-800">HomeMate</span>
+        </div>
+      </div>
+
+      <!-- User Info -->
+      <div class="p-6 border-b border-gray-200" *ngIf="currentUser">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+            <span class="text-primary-600 font-semibold">{{ getInitials(currentUser.fullName) }}</span>
           </div>
           <div>
-            <span class="text-xl font-bold text-gray-900">HomeMate</span>
-            <span class="text-sm text-gray-500 ml-2">My Profile Home</span>
+            <p class="font-medium text-gray-900">{{ currentUser.fullName }}</p>
+            <p class="text-sm text-gray-500">{{ currentUser.occupation }}</p>
           </div>
         </div>
-        
-        <!-- Navigation -->
-        <nav class="hidden md:flex items-center space-x-8">
-          <button (click)="activeTab = 'home'" [class.text-blue-600]="activeTab === 'home'" [class.text-gray-700]="activeTab !== 'home'" class="font-medium transition-colors hover:text-blue-600">
-            🏠 Home
-          </button>
-          <button (click)="activeTab = 'apartments'" [class.text-blue-600]="activeTab === 'apartments'" [class.text-gray-700]="activeTab !== 'apartments'" class="font-medium transition-colors hover:text-blue-600">
-            🏢 Find Apartments
-          </button>
-          <button (click)="activeTab = 'saved'" [class.text-blue-600]="activeTab === 'saved'" [class.text-gray-700]="activeTab !== 'saved'" class="font-medium transition-colors hover:text-blue-600">
-            ❤️ Saved
-            <span class="bg-red-500 text-white text-xs rounded-full px-2 py-1 ml-1">12</span>
-          </button>
-          <button (click)="activeTab = 'matches'" [class.text-blue-600]="activeTab === 'matches'" [class.text-gray-700]="activeTab !== 'matches'" class="font-medium transition-colors hover:text-blue-600">
-            👥 Matched Profiles
-            <span class="bg-green-500 text-white text-xs rounded-full px-2 py-1 ml-1">{{ matchedProfiles.length }}</span>
-          </button>
-          <button (click)="activeTab = 'messages'" [class.text-blue-600]="activeTab === 'messages'" [class.text-gray-700]="activeTab !== 'messages'" class="font-medium transition-colors hover:text-blue-600">
-            💬 Messages
-            <span class="bg-red-500 text-white text-xs rounded-full px-2 py-1 ml-1">3</span>
-          </button>
-          <button (click)="activeTab = 'profile'" [class.text-blue-600]="activeTab === 'profile'" [class.text-gray-700]="activeTab !== 'profile'" class="font-medium transition-colors hover:text-blue-600">
-            👤 Profile
-          </button>
-          
-          <div class="flex items-center space-x-4 ml-8 border-l border-gray-200 pl-8">
-            <div class="text-right">
-              <p class="text-sm font-medium text-gray-900">{{ currentUser?.fullName || 'User' }}</p>
-            </div>
-            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
-              {{ getInitials(currentUser?.fullName) }}
-            </div>
-            <button 
-              (click)="logout()" 
-              class="text-red-600 hover:text-red-800 font-medium px-3 py-2 rounded-lg hover:bg-red-50 transition-all"
-            >
-              Logout
-            </button>
-          </div>
-        </nav>
+      </div>
 
-        <!-- Mobile menu button -->
-        <button class="md:hidden p-2" (click)="mobileMenuOpen = !mobileMenuOpen">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      <!-- Navigation -->
+      <nav class="mt-6">
+        <div class="px-3">
+          <button 
+            (click)="activeTab = 'home'; mobileMenuOpen = false"
+            [class.bg-primary-50]="activeTab === 'home'"
+            [class.text-primary-600]="activeTab === 'home'"
+            [class.border-primary-500]="activeTab === 'home'"
+            class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg border-l-4 border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 mb-1"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Home
+          </button>
+
+          <button 
+            (click)="activeTab = 'apartments'; mobileMenuOpen = false"
+            [class.bg-primary-50]="activeTab === 'apartments'"
+            [class.text-primary-600]="activeTab === 'apartments'"
+            [class.border-primary-500]="activeTab === 'apartments'"
+            class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg border-l-4 border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 mb-1"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            Find Apartments
+          </button>
+
+          <button 
+            (click)="activeTab = 'matches'; mobileMenuOpen = false"
+            [class.bg-primary-50]="activeTab === 'matches'"
+            [class.text-primary-600]="activeTab === 'matches'"
+            [class.border-primary-500]="activeTab === 'matches'"
+            class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg border-l-4 border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 mb-1"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            Roommate Matches
+          </button>
+
+          <button 
+            (click)="activeTab = 'messages'; mobileMenuOpen = false"
+            [class.bg-primary-50]="activeTab === 'messages'"
+            [class.text-primary-600]="activeTab === 'messages'"
+            [class.border-primary-500]="activeTab === 'messages'"
+            class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg border-l-4 border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 mb-1"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            Messages
+          </button>
+
+          <button 
+            (click)="activeTab = 'profile'; mobileMenuOpen = false"
+            [class.bg-primary-50]="activeTab === 'profile'"
+            [class.text-primary-600]="activeTab === 'profile'"
+            [class.border-primary-500]="activeTab === 'profile'"
+            class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg border-l-4 border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50 mb-1"
+          >
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            Profile
+          </button>
+        </div>
+      </nav>
+
+      <!-- Logout Button -->
+      <div class="absolute bottom-0 w-64 p-6 border-t border-gray-200">
+        <button 
+          (click)="logout()"
+          class="w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg"
+        >
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
           </svg>
+          Logout
         </button>
       </div>
-
-      <!-- Mobile Navigation -->
-      <div *ngIf="mobileMenuOpen" class="md:hidden border-t border-gray-200 py-4">
-        <div class="space-y-2">
-          <button (click)="activeTab = 'home'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">🏠 Home</button>
-          <button (click)="activeTab = 'apartments'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">🏢 Find Apartments</button>
-          <button (click)="activeTab = 'saved'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">❤️ Saved</button>
-          <button (click)="activeTab = 'matches'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">👥 Matched Profiles</button>
-          <button (click)="activeTab = 'messages'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">💬 Messages</button>
-          <button (click)="activeTab = 'profile'; mobileMenuOpen = false" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">👤 Profile</button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Home Tab -->
-    <div *ngIf="activeTab === 'home'">
-      <!-- Enhanced Welcome Banner -->
-      <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg p-8 mb-8 text-white relative overflow-hidden">
-        <!-- Background Pattern -->
-        <div class="absolute inset-0 opacity-10">
-          <svg class="w-full h-full" viewBox="0 0 100 100" fill="none">
-            <defs>
-              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" stroke-width="0.5"/>
-              </pattern>
-            </defs>
-            <rect width="100" height="100" fill="url(#grid)" />
-          </svg>
-        </div>
-        
-        <div class="relative z-10 text-center">
-          <div class="flex items-center justify-center mb-4">
-            <div class="bg-white bg-opacity-20 rounded-full p-3 mr-4">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-              </svg>
-            </div>
-            <h1 class="text-3xl lg:text-4xl font-bold">Welcome back, {{ (currentUser?.fullName || '').split(' ')[0] || 'User' }}! 👋</h1>
-          </div>
-          
-          <div class="space-y-3 mb-6 max-w-4xl mx-auto">
-            <p class="text-blue-100 text-lg leading-relaxed">
-              🏠 <strong>HomeMate</strong> connects you with compatible roommates and verified housing options.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
-          <div class="text-3xl mb-2">🏠</div>
-          <div class="text-2xl font-bold text-gray-900">{{ featuredListings.length + 15 }}</div>
-          <div class="text-sm text-gray-600">Available Apartments</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
-          <div class="text-3xl mb-2">❤️</div>
-          <div class="text-2xl font-bold text-gray-900">12</div>
-          <div class="text-sm text-gray-600">Saved Apartments</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
-          <div class="text-3xl mb-2">👥</div>
-          <div class="text-2xl font-bold text-gray-900">{{ matchedProfiles.length }}</div>
-          <div class="text-sm text-gray-600">Matched Profiles</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow">
-          <div class="text-3xl mb-2">💬</div>
-          <div class="text-2xl font-bold text-gray-900">3</div>
-          <div class="text-sm text-gray-600">Active Chats</div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div class="bg-white rounded-xl shadow-lg p-8">
-          <h3 class="text-xl font-bold text-gray-900 mb-6">🚀 Quick Actions</h3>
-          <div class="space-y-4">
-            <button (click)="activeTab = 'apartments'" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-medium text-left flex items-center">
-              <span class="mr-3">🔍</span>
-              <div>
-                <div class="font-semibold">Search Apartments</div>
-                <div class="text-sm text-blue-100">Find your perfect home</div>
-              </div>
-            </button>
-            <button (click)="activeTab = 'saved'" class="w-full bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-600 transition-all font-medium text-left flex items-center">
-              <span class="mr-3">❤️</span>
-              <div>
-                <div class="font-semibold">Saved Apartments</div>
-                <div class="text-sm text-red-100">12 saved properties</div>
-              </div>
-            </button>
-            <button (click)="activeTab = 'matches'" class="w-full bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-all font-medium text-left flex items-center">
-              <span class="mr-3">👥</span>
-              <div>
-                <div class="font-semibold">View Matched Profiles</div>
-                <div class="text-sm text-green-100">{{ matchedProfiles.length }} compatible matches</div>
-              </div>
-            </button>
-            <button (click)="activeTab = 'messages'" class="w-full bg-purple-500 text-white py-3 px-6 rounded-lg hover:bg-purple-600 transition-all font-medium text-left flex items-center">
-              <span class="mr-3">💬</span>
-              <div>
-                <div class="font-semibold">View Messages</div>
-                <div class="text-sm text-purple-100">3 active conversations</div>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-lg p-8">
-          <h3 class="text-xl font-bold text-gray-900 mb-6">📊 Your Activity</h3>
-          <div class="space-y-4">
-            <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-              <div class="flex items-center">
-                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <span class="text-blue-600">👀</span>
-                </div>
-                <div>
-                  <div class="font-semibold text-gray-900">Apartments Viewed</div>
-                  <div class="text-sm text-gray-600">Last 7 days</div>
-                </div>
-              </div>
-              <div class="text-2xl font-bold text-blue-600">24</div>
-            </div>
-            <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-              <div class="flex items-center">
-                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                  <span class="text-green-600">👥</span>
-                </div>
-                <div>
-                  <div class="font-semibold text-gray-900">Profile Matches</div>
-                  <div class="text-sm text-gray-600">Compatible roommates</div>
-                </div>
-              </div>
-              <div class="text-2xl font-bold text-green-600">{{ matchedProfiles.length }}</div>
-            </div>
-            <div class="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
-              <div class="flex items-center">
-                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                  <span class="text-purple-600">💬</span>
-                </div>
-                <div>
-                  <div class="font-semibold text-gray-900">Messages Sent</div>
-                  <div class="text-sm text-gray-600">This week</div>
-                </div>
-              </div>
-              <div class="text-2xl font-bold text-purple-600">15</div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- Apartment Search Tab -->
-    <div *ngIf="activeTab === 'apartments'">
-      <!-- Apartment Search Section -->
-      <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900">🏢 Find Your Perfect Apartment</h2>
-            <p class="text-gray-600 mt-1">Search through thousands of verified apartment listings</p>
-          </div>
-          <div class="flex items-center space-x-4">
-            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-              💾 Save Search
-            </button>
-            <button class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-              🗺️ View Map
-            </button>
-          </div>
-        </div>
-        
-        <!-- Enhanced Search Form -->
-        <form [formGroup]="housingSearchForm" (ngSubmit)="searchHousing()" class="mb-8">
-          <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">📍 Location</label>
-              <input
-                type="text"
-                formControlName="zipCode"
-                placeholder="ZIP Code or City"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">💰 Max Budget</label>
-              <select formControlName="maxPrice" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">Any Budget</option>
-                <option value="1000">Under $1,000</option>
-                <option value="1500">Under $1,500</option>
-                <option value="2000">Under $2,000</option>
-                <option value="2500">Under $2,500</option>
-                <option value="3000">Under $3,000</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">🛏️ Bedrooms</label>
-              <select formControlName="bedrooms" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">Any</option>
-                <option value="1">1 Bedroom</option>
-                <option value="2">2 Bedrooms</option>
-                <option value="3">3+ Bedrooms</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">🏠 Property Type</label>
-              <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">All Types</option>
-                <option value="apartment">Apartment</option>
-                <option value="house">House</option>
-                <option value="condo">Condo</option>
-                <option value="studio">Studio</option>
-              </select>
-            </div>
-
-            <div class="flex items-end">
-              <button
-                type="submit"
-                [disabled]="isSearchingHousing"
-                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 transition-all font-medium"
-              >
-                <span *ngIf="isSearchingHousing">🔄 Searching...</span>
-                <span *ngIf="!isSearchingHousing">🔍 Search Apartments</span>
-              </button>
-            </div>
+    <!-- Main Content -->
+    <div class="flex-1 lg:ml-0" [class.ml-0]="!mobileMenuOpen">
+      <div class="p-6">
+        <!-- Home Tab -->
+        <div *ngIf="activeTab === 'home'">
+          <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome back, {{ currentUser?.fullName?.split(' ')[0] }}!</h1>
+            <p class="text-gray-600">Find your perfect roommate and housing match</p>
           </div>
 
-          <!-- Advanced Filters -->
-          <div class="border-t border-gray-200 pt-6">
-            <h4 class="text-sm font-medium text-gray-900 mb-4">🎛️ Advanced Filters</h4>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              <label class="flex items-center">
-                <input type="checkbox" formControlName="petFriendly" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                <span class="ml-2 text-sm text-gray-700">🐕 Pet Friendly</span>
-              </label>
-              <label class="flex items-center">
-                <input type="checkbox" formControlName="furnished" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                <span class="ml-2 text-sm text-gray-700">🛋️ Furnished</span>
-              </label>
-              <label class="flex items-center">
-                <input type="checkbox" formControlName="parking" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                <span class="ml-2 text-sm text-gray-700">🚗 Parking</span>
-              </label>
-              <label class="flex items-center">
-                <input type="checkbox" formControlName="gym" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                <span class="ml-2 text-sm text-gray-700">💪 Gym/Fitness</span>
-              </label>
-              <label class="flex items-center">
-                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                <span class="ml-2 text-sm text-gray-700">🏊 Pool</span>
-              </label>
-              <label class="flex items-center">
-                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                <span class="ml-2 text-sm text-gray-700">🌅 Balcony</span>
-              </label>
-            </div>
-          </div>
-        </form>
-
-        <!-- Apartment Results -->
-        <div *ngIf="housingResults.length > 0 || hasSearchedHousing">
-          <div class="flex justify-between items-center mb-6">
-            <div>
-              <h3 class="text-xl font-bold text-gray-900">Search Results</h3>
-              <p class="text-gray-600">{{ housingResults.length }} apartments found</p>
-            </div>
-            
-            <div class="flex items-center space-x-4">
-              <label class="text-sm font-medium text-gray-700">Sort by:</label>
-              <select 
-                (change)="onSortChange($event)"
-                class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="date-desc">Newest First</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="rating-desc">Highest Rated</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Apartment Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="housingResults.length > 0">
-            <div *ngFor="let listing of housingResults" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 group">
-              <div class="relative h-48 overflow-hidden">
-                <img 
-                  [src]="listing.images[0]" 
-                  [alt]="listing.title"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                >
-                <div class="absolute top-4 left-4">
-                  <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-                    ${{ listing.price }}/month
-                  </span>
-                </div>
-                <div class="absolute top-4 right-4" *ngIf="listing.isFeatured">
-                  <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                    ⭐ Featured
-                  </span>
-                </div>
-                <div class="absolute bottom-4 right-4">
-                  <button class="bg-white bg-opacity-90 text-red-500 p-2 rounded-full hover:bg-white transition-colors">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              <div class="p-6">
-                <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing.title }}</h4>
-                <p class="text-gray-600 mb-3 flex items-center">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <!-- Quick Stats -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+              <div class="flex items-center">
+                <div class="bg-blue-100 p-3 rounded-lg">
+                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                   </svg>
-                  {{ listing.address }}
-                </p>
-                
-                <div class="flex items-center space-x-4 mb-4 text-sm text-gray-600">
-                  <span class="flex items-center">
-                    🛏️ {{ listing.bedrooms }} bed
-                  </span>
-                  <span class="flex items-center">
-                    🚿 {{ listing.bathrooms }} bath
-                  </span>
-                  <span class="flex items-center">
-                    📐 {{ listing.squareFeet }} sq ft
-                  </span>
                 </div>
-
-                <div class="flex flex-wrap gap-2 mb-4">
-                  <span 
-                    *ngFor="let amenity of listing.amenities.slice(0, 3)" 
-                    class="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium"
-                  >
-                    {{ amenity }}
-                  </span>
-                  <span 
-                    *ngIf="listing.amenities.length > 3"
-                    class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"
-                  >
-                    +{{ listing.amenities.length - 3 }} more
-                  </span>
+                <div class="ml-4">
+                  <p class="text-sm font-medium text-gray-500">Potential Matches</p>
+                  <p class="text-2xl font-bold text-gray-900">{{ matchedProfiles.length }}</p>
                 </div>
+              </div>
+            </div>
 
-                <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                  <div class="flex items-center space-x-2">
-                    <div class="flex items-center">
-                      <span class="text-yellow-400 mr-1">⭐</span>
-                      <span class="text-sm text-gray-600">{{ listing.landlord?.rating }}</span>
-                    </div>
-                    <span class="text-xs text-gray-500">• {{ listing.landlord?.name }}</span>
-                  </div>
-                  <div class="flex space-x-2">
-                    <button class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm">
-                      📞 Contact
-                    </button>
-                    <button class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                      👁️ View Details
-                    </button>
-                  </div>
+            <div class="bg-white rounded-lg shadow p-6">
+              <div class="flex items-center">
+                <div class="bg-green-100 p-3 rounded-lg">
+                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <p class="text-sm font-medium text-gray-500">Featured Listings</p>
+                  <p class="text-2xl font-bold text-gray-900">{{ featuredListings.length }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+              <div class="flex items-center">
+                <div class="bg-purple-100 p-3 rounded-lg">
+                  <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <p class="text-sm font-medium text-gray-500">Active Chats</p>
+                  <p class="text-2xl font-bold text-gray-900">3</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- No Results -->
-          <div *ngIf="hasSearchedHousing && housingResults.length === 0" class="text-center py-12">
-            <div class="text-6xl mb-4">🏠</div>
-            <h4 class="text-lg font-medium text-gray-900 mb-2">No apartments found</h4>
-            <p class="text-gray-600 mb-4">Try adjusting your search criteria or contact our support team for assistance.</p>
-            <div class="flex justify-center space-x-4">
+          <!-- Featured Listings Preview -->
+          <div class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold text-gray-900">Featured Apartments</h2>
               <button 
-                (click)="clearHousingFilters()"
-                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                (click)="activeTab = 'apartments'"
+                class="text-primary-600 hover:text-primary-700 font-medium"
               >
-                🔄 Clear Filters
+                View All →
               </button>
-              <button class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                📞 Contact Support
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Featured Apartments (Default View) -->
-        <div *ngIf="!hasSearchedHousing && featuredListings.length > 0">
-          <h3 class="text-xl font-bold text-gray-900 mb-6">🌟 Featured Apartments</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div *ngFor="let listing of featuredListings" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 group">
-              <div class="relative h-48 overflow-hidden">
-                <img 
-                  [src]="listing.images[0]" 
-                  [alt]="listing.title"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                >
-                <div class="absolute top-4 left-4">
-                  <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-                    ${{ listing.price }}/month
-                  </span>
-                </div>
-                <div class="absolute top-4 right-4">
-                  <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                    ⭐ Featured
-                  </span>
-                </div>
-              </div>
-
-              <div class="p-6">
-                <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing.title }}</h4>
-                <p class="text-gray-600 mb-3 flex items-center">
-                  📍 {{ listing.address }}
-                </p>
-                
-                <div class="flex items-center space-x-4 mb-4 text-sm text-gray-600">
-                  <span>🛏️ {{ listing.bedrooms }} bed</span>
-                  <span>🚿 {{ listing.bathrooms }} bath</span>
-                  <span>📐 {{ listing.squareFeet }} sq ft</span>
-                </div>
-
-                <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                  <div class="flex items-center space-x-2">
-                    <span class="text-yellow-500">⭐</span>
-                    <span class="text-sm text-gray-600">{{ listing.landlord?.rating }}</span>
-                  </div>
-                  <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                    👁️ View Details
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Saved Apartments Tab -->
-    <div *ngIf="activeTab === 'saved'">
-      <div class="bg-white rounded-xl shadow-lg p-8">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900">❤️ Saved Apartments</h2>
-            <p class="text-gray-600 mt-1">Your favorite apartment listings</p>
-          </div>
-          <div class="flex items-center space-x-4">
-            <span class="text-sm text-gray-500">12 saved apartments</span>
-            <button class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-              🗂️ Organize
-            </button>
-          </div>
-        </div>
-
-        <!-- Saved Apartments Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div *ngFor="let listing of featuredListings" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 group">
-            <div class="relative h-48 overflow-hidden">
-              <img 
-                [src]="listing.images[0]" 
-                [alt]="listing.title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              >
-              <div class="absolute top-4 left-4">
-                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-                  ${{ listing.price }}/month
-                </span>
-              </div>
-              <div class="absolute top-4 right-4">
-                <button class="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                  </svg>
-                </button>
-              </div>
-              <div class="absolute bottom-4 left-4">
-                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-                  Saved 3 days ago
-                </span>
-              </div>
-            </div>
-
-            <div class="p-6">
-              <h4 class="text-xl font-bold text-gray-900 mb-2">{{ listing.title }}</h4>
-              <p class="text-gray-600 mb-3 flex items-center">
-                📍 {{ listing.address }}
-              </p>
-              
-              <div class="flex items-center space-x-4 mb-4 text-sm text-gray-600">
-                <span>🛏️ {{ listing.bedrooms }} bed</span>
-                <span>🚿 {{ listing.bathrooms }} bath</span>
-                <span>📐 {{ listing.squareFeet }} sq ft</span>
-              </div>
-
-              <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                <div class="flex items-center space-x-2">
-                  <span class="text-yellow-500">⭐</span>
-                  <span class="text-sm text-gray-600">{{ listing.landlord?.rating }}</span>
-                </div>
-                <div class="flex space-x-2">
-                  <button class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm">
-                    📞 Contact
-                  </button>
-                  <button class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                    👁️ View Details
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Matched Profiles Tab with Enhanced Messaging -->
-    <div *ngIf="activeTab === 'matches'">
-      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="border-b border-gray-200 p-6">
-          <h2 class="text-2xl font-bold text-gray-900">👥 Matched Profiles</h2>
-          <p class="text-gray-600 mt-1">Connect with compatible roommates based on your preferences</p>
-        </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 h-[600px]">
-          <!-- Profile List -->
-          <div class="lg:col-span-1 border-r border-gray-200 overflow-y-auto">
-            <div class="p-4">
-              <div class="space-y-2">
-                <div 
-                  *ngFor="let profile of matchedProfiles" 
-                  (click)="selectProfile(profile)"
-                  [class.bg-blue-50]="selectedProfile?.id === profile.id"
-                  [class.border-l-4]="selectedProfile?.id === profile.id"
-                  [class.border-blue-500]="selectedProfile?.id === profile.id"
-                  class="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-all"
-                >
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {{ getInitials(profile.fullName) }}
-                      </div>
-                      <div>
-                        <h4 class="font-semibold text-gray-900">{{ profile.fullName }}</h4>
-                        <p class="text-xs text-gray-500">{{ profile.age }} • {{ profile.occupation }}</p>
-                      </div>
-                    </div>
-                    <div class="text-right">
-                      <div class="text-sm font-bold text-green-600">{{ profile.matchPercentage }}%</div>
-                      <div class="text-xs text-gray-500">match</div>
-                    </div>
-                  </div>
-                  
-                  <div class="text-sm text-gray-600 mb-2">{{ profile.budgetRange }}</div>
-                  
-                  <div class="flex flex-wrap gap-1">
-                    <span 
-                      *ngFor="let interest of profile.sharedInterests.slice(0, 2)" 
-                      class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs"
-                    >
-                      {{ interest }}
-                    </span>
-                    <span 
-                      *ngIf="profile.sharedInterests.length > 2"
-                      class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"
-                    >
-                      +{{ profile.sharedInterests.length - 2 }}
-                    </span>
-                  </div>
-                  
-                  <!-- Show last message preview if exists -->
-                  <div *ngIf="getChatMessages(profile.id).length > 0" class="mt-2 pt-2 border-t border-gray-100">
-                    <p class="text-xs text-gray-500 truncate">
-                      {{ getChatMessages(profile.id)[getChatMessages(profile.id).length - 1].text }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Chat Area -->
-          <div class="lg:col-span-2 flex flex-col">
-            <div *ngIf="!selectedProfile" class="flex-1 p-6 overflow-y-auto bg-gray-50">
-              <div class="text-center text-gray-500 py-8">
-                <div class="text-4xl mb-4">👥</div>
-                <p class="text-lg font-medium mb-2">Select a matched profile to start chatting</p>
-                <p class="text-sm">Choose from {{ matchedProfiles.length }} compatible roommate matches</p>
-              </div>
             </div>
             
-            <div *ngIf="selectedProfile" class="flex-1 flex flex-col">
-              <!-- Chat Header -->
-              <div class="border-b border-gray-200 p-4 bg-white">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
-                      {{ getInitials(selectedProfile.fullName) }}
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-gray-900">{{ selectedProfile.fullName }}</h3>
-                      <p class="text-sm text-gray-600">{{ selectedProfile.matchPercentage }}% match • {{ selectedProfile.occupation }}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <button class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm hover:bg-blue-200 transition-colors">
-                      📞 Call
-                    </button>
-                    <button class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm hover:bg-green-200 transition-colors">
-                      📹 Video
-                    </button>
-                  </div>
-                </div>
-                
-                <!-- Profile Quick Info -->
-                <div class="mt-3 p-3 bg-gray-50 rounded-lg">
-                  <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span class="text-gray-600">Budget:</span>
-                      <span class="font-medium ml-1">{{ selectedProfile.budgetRange }}</span>
-                    </div>
-                    <div>
-                      <span class="text-gray-600">Location:</span>
-                      <span class="font-medium ml-1">{{ selectedProfile.locationPreference }}</span>
-                    </div>
-                  </div>
-                  <div class="mt-2">
-                    <span class="text-gray-600">Shared Interests:</span>
-                    <div class="flex flex-wrap gap-1 mt-1">
-                      <span 
-                        *ngFor="let interest of selectedProfile.sharedInterests.slice(0, 4)" 
-                        class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs"
-                      >
-                        {{ interest }}
-                      </span>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div *ngFor="let listing of featuredListings.slice(0, 3)" class="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow">
+                <img 
+                  [src]="listing.images[0] || 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg'" 
+                  [alt]="listing.title"
+                  class="w-full h-48 object-cover"
+                >
+                <div class="p-4">
+                  <h3 class="font-semibold text-gray-900 mb-2">{{ listing.title }}</h3>
+                  <p class="text-gray-600 text-sm mb-2">{{ listing.address }}</p>
+                  <div class="flex justify-between items-center">
+                    <span class="text-2xl font-bold text-primary-600">${{ listing.price }}</span>
+                    <span class="text-sm text-gray-500">{{ listing.bedrooms }}BR • {{ listing.bathrooms }}BA</span>
                   </div>
                 </div>
               </div>
-              
-              <!-- Chat Messages -->
-              <div class="flex-1 p-6 overflow-y-auto bg-gray-50 space-y-4">
-                <!-- Match notification -->
-                <div class="text-center">
-                  <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm inline-block">
-                    🎉 You matched with {{ selectedProfile.fullName }}! Start the conversation.
-                  </div>
-                </div>
-                
-                <!-- Chat messages -->
-                <div *ngFor="let message of getChatMessages(selectedProfile.id)" class="flex" [class.justify-end]="message.isOwn">
-                  <div class="flex items-end space-x-2 max-w-xs lg:max-w-md" [class.flex-row-reverse]="message.isOwn" [class.space-x-reverse]="message.isOwn">
-                    <div 
-                      *ngIf="!message.isOwn"
-                      class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                    >
-                      {{ getInitials(selectedProfile.fullName) }}
-                    </div>
-                    <div 
-                      [class.bg-blue-500]="message.isOwn"
-                      [class.text-white]="message.isOwn"
-                      [class.bg-white]="!message.isOwn"
-                      [class.text-gray-900]="!message.isOwn"
-                      class="px-4 py-2 rounded-lg shadow-sm"
-                    >
-                      <p class="text-sm">{{ message.text }}</p>
-                      <p class="text-xs mt-1 opacity-70">
-                        {{ message.timestamp | date:'short' }}
-                      </p>
-                    </div>
-                    <div 
-                      *ngIf="message.isOwn"
-                      class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                    >
-                      {{ getInitials(currentUser?.fullName) }}
+            </div>
+          </div>
+
+          <!-- Recent Matches Preview -->
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold text-gray-900">Recent Matches</h2>
+              <button 
+                (click)="activeTab = 'matches'"
+                class="text-primary-600 hover:text-primary-700 font-medium"
+              >
+                View All →
+              </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div *ngFor="let profile of matchedProfiles.slice(0, 3)" class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+                <div class="flex items-center space-x-4 mb-4">
+                  <img 
+                    [src]="profile.profileImage || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg'" 
+                    [alt]="profile.fullName"
+                    class="w-16 h-16 rounded-full object-cover"
+                  >
+                  <div>
+                    <h3 class="font-semibold text-gray-900">{{ profile.fullName }}</h3>
+                    <p class="text-gray-600 text-sm">{{ profile.occupation }}</p>
+                    <div class="flex items-center mt-1">
+                      <span class="text-green-600 font-medium">{{ profile.matchPercentage }}% Match</span>
                     </div>
                   </div>
                 </div>
-                
-                <!-- Typing indicator (optional) -->
-                <div *ngIf="isTyping" class="flex items-center space-x-2">
-                  <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                    {{ getInitials(selectedProfile.fullName) }}
-                  </div>
-                  <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
-                    <div class="flex space-x-1">
-                      <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                      <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                    </div>
-                  </div>
+                <div class="flex flex-wrap gap-2">
+                  <span *ngFor="let interest of profile.sharedInterests.slice(0, 3)" 
+                        class="px-2 py-1 bg-primary-100 text-primary-700 text-xs rounded-full">
+                    {{ interest }}
+                  </span>
                 </div>
               </div>
-              
-              <!-- Message Input -->
-              <div class="border-t border-gray-200 p-4 bg-white">
-                <div class="flex items-center space-x-4">
-                  <button class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-                    </svg>
-                  </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Apartments Tab -->
+        <div *ngIf="activeTab === 'apartments'">
+          <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Find Apartments</h1>
+            <p class="text-gray-600">Discover your perfect living space</p>
+          </div>
+
+          <!-- Search Form -->
+          <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <form [formGroup]="housingSearchForm" (ngSubmit)="searchHousing()" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
                   <input 
                     type="text" 
-                    [(ngModel)]="newMessage"
-                    (keyup.enter)="sendMessage()"
-                    placeholder="Type your message..."
-                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    formControlName="zipCode"
+                    placeholder="e.g., 10001"
+                    class="form-input"
                   >
-                  <button class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                  </button>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Max Price</label>
+                  <input 
+                    type="number" 
+                    formControlName="maxPrice"
+                    placeholder="e.g., 2500"
+                    class="form-input"
+                  >
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Bedrooms</label>
+                  <select formControlName="bedrooms" class="form-select">
+                    <option value="">Any</option>
+                    <option value="0">Studio</option>
+                    <option value="1">1 BR</option>
+                    <option value="2">2 BR</option>
+                    <option value="3">3+ BR</option>
+                  </select>
+                </div>
+                
+                <div class="flex items-end">
                   <button 
-                    (click)="sendMessage()"
-                    [disabled]="!newMessage.trim()"
-                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    type="submit" 
+                    [disabled]="isSearchingHousing"
+                    class="w-full btn-primary disabled:opacity-50"
                   >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
+                    <span *ngIf="isSearchingHousing">Searching...</span>
+                    <span *ngIf="!isSearchingHousing">Search</span>
                   </button>
                 </div>
               </div>
-            </div>
+              
+              <!-- Additional Filters -->
+              <div class="border-t pt-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <label class="flex items-center">
+                    <input type="checkbox" formControlName="petFriendly" class="mr-2">
+                    <span class="text-sm text-gray-700">Pet Friendly</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input type="checkbox" formControlName="furnished" class="mr-2">
+                    <span class="text-sm text-gray-700">Furnished</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input type="checkbox" formControlName="parking" class="mr-2">
+                    <span class="text-sm text-gray-700">Parking</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input type="checkbox" formControlName="gym" class="mr-2">
+                    <span class="text-sm text-gray-700">Gym</span>
+                  </label>
+                </div>
+              </div>
+            </form>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Messages Tab -->
-    <div *ngIf="activeTab === 'messages'">
-      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="border-b border-gray-200 p-6">
-          <h2 class="text-2xl font-bold text-gray-900">💬 Messages</h2>
-          <p class="text-gray-600 mt-1">All your conversations in one place</p>
-        </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-3 h-[600px]">
-          <!-- Conversation List -->
-          <div class="lg:col-span-1 border-r border-gray-200 overflow-y-auto">
-            <div class="p-4">
-              <div class="space-y-2">
-                <!-- Active conversations from matched profiles -->
-                <div 
-                  *ngFor="let profile of matchedProfiles.slice(0, 3)" 
-                  (click)="selectProfile(profile); activeTab = 'matches'"
-                  class="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-all border-l-4 border-transparent hover:border-blue-500"
+          <!-- Search Results -->
+          <div *ngIf="hasSearchedHousing">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-xl font-bold text-gray-900">
+                Search Results ({{ housingResults.length }})
+              </h2>
+              <div class="flex items-center space-x-4">
+                <select (change)="onSortChange($event)" class="form-select w-auto">
+                  <option value="date-desc">Newest First</option>
+                  <option value="date-asc">Oldest First</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
+                <button (click)="clearHousingFilters()" class="btn-secondary">Clear Filters</button>
+              </div>
+            </div>
+
+            <div *ngIf="housingResults.length === 0" class="text-center py-12">
+              <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+              </svg>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">No apartments found</h3>
+              <p class="text-gray-600">Try adjusting your search criteria</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div *ngFor="let listing of housingResults" class="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow">
+                <img 
+                  [src]="listing.images[0] || 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg'" 
+                  [alt]="listing.title"
+                  class="w-full h-48 object-cover"
                 >
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {{ getInitials(profile.fullName) }}
-                      </div>
-                      <div>
-                        <h4 class="font-semibold text-gray-900">{{ profile.fullName }}</h4>
-                        <p class="text-xs text-gray-500">{{ profile.occupation }}</p>
-                      </div>
-                    </div>
-                    <div class="text-right">
-                      <span class="text-xs text-gray-500">2 min ago</span>
-                      <div class="bg-red-500 text-white text-xs rounded-full px-2 py-1 mt-1">New</div>
+                <div class="p-6">
+                  <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-semibold text-gray-900">{{ listing.title }}</h3>
+                    <span *ngIf="listing.isFeatured" class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Featured</span>
+                  </div>
+                  <p class="text-gray-600 text-sm mb-3">{{ listing.address }}</p>
+                  <p class="text-gray-700 text-sm mb-4 line-clamp-2">{{ listing.description }}</p>
+                  
+                  <div class="flex justify-between items-center mb-4">
+                    <span class="text-2xl font-bold text-primary-600">${{ listing.price }}/mo</span>
+                    <div class="text-sm text-gray-500">
+                      {{ listing.bedrooms }}BR • {{ listing.bathrooms }}BA • {{ listing.squareFeet }} sq ft
                     </div>
                   </div>
                   
-                  <p class="text-sm text-gray-600 truncate">
-                    {{ getChatMessages(profile.id).length > 0 ? getChatMessages(profile.id)[getChatMessages(profile.id).length - 1].text : 'Start a conversation...' }}
-                  </p>
-                </div>
-                
-                <!-- Sample landlord conversations -->
-                <div class="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-all">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                        JS
-                      </div>
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <span *ngFor="let amenity of listing.amenities.slice(0, 3)" 
+                          class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                      {{ amenity }}
+                    </span>
+                    <span *ngIf="listing.amenities.length > 3" 
+                          class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                      +{{ listing.amenities.length - 3 }} more
+                    </span>
+                  </div>
+                  
+                  <div class="flex space-x-2">
+                    <span *ngIf="listing.petFriendly" class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Pet Friendly</span>
+                    <span *ngIf="listing.furnished" class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">Furnished</span>
+                  </div>
+                  
+                  <div class="mt-4 pt-4 border-t border-gray-200" *ngIf="listing.landlord">
+                    <div class="flex items-center justify-between">
                       <div>
-                        <h4 class="font-semibold text-gray-900">John Smith (Landlord)</h4>
-                        <p class="text-xs text-gray-500">Downtown Apartment</p>
+                        <p class="text-sm font-medium text-gray-900">{{ listing.landlord.name }}</p>
+                        <p class="text-xs text-gray-500">{{ listing.landlord.phone }}</p>
+                      </div>
+                      <div class="flex items-center" *ngIf="listing.landlord.rating">
+                        <svg class="w-4 h-4 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <span class="text-sm text-gray-600">{{ listing.landlord.rating }}</span>
                       </div>
                     </div>
-                    <span class="text-xs text-gray-500">1 hour ago</span>
                   </div>
-                  <p class="text-sm text-gray-600 truncate">The apartment is available for viewing this weekend...</p>
-                </div>
-                
-                <div class="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-all">
-                  <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold">
-                        SJ
-                      </div>
-                      <div>
-                        <h4 class="font-semibold text-gray-900">Sarah Johnson (Landlord)</h4>
-                        <p class="text-xs text-gray-500">Campus Studio</p>
-                      </div>
-                    </div>
-                    <span class="text-xs text-gray-500">Yesterday</span>
-                  </div>
-                  <p class="text-sm text-gray-600 truncate">Thanks for your interest! The lease terms are flexible...</p>
                 </div>
               </div>
             </div>
           </div>
-          
-          <!-- Chat Area -->
-          <div class="lg:col-span-2 flex flex-col">
-            <div class="flex-1 p-6 overflow-y-auto bg-gray-50">
-              <div class="text-center text-gray-500 py-8">
-                <div class="text-4xl mb-4">💬</div>
-                <p class="text-lg font-medium mb-2">Select a conversation to view messages</p>
-                <p class="text-sm">You have 3 active conversations</p>
-                <div class="mt-6">
+
+          <!-- Featured Listings (when no search) -->
+          <div *ngIf="!hasSearchedHousing">
+            <h2 class="text-xl font-bold text-gray-900 mb-6">Featured Apartments</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div *ngFor="let listing of featuredListings" class="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow">
+                <img 
+                  [src]="listing.images[0] || 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg'" 
+                  [alt]="listing.title"
+                  class="w-full h-48 object-cover"
+                >
+                <div class="p-6">
+                  <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-semibold text-gray-900">{{ listing.title }}</h3>
+                    <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Featured</span>
+                  </div>
+                  <p class="text-gray-600 text-sm mb-3">{{ listing.address }}</p>
+                  <p class="text-gray-700 text-sm mb-4 line-clamp-2">{{ listing.description }}</p>
+                  
+                  <div class="flex justify-between items-center mb-4">
+                    <span class="text-2xl font-bold text-primary-600">${{ listing.price }}/mo</span>
+                    <div class="text-sm text-gray-500">
+                      {{ listing.bedrooms }}BR • {{ listing.bathrooms }}BA
+                    </div>
+                  </div>
+                  
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <span *ngFor="let amenity of listing.amenities.slice(0, 3)" 
+                          class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                      {{ amenity }}
+                    </span>
+                  </div>
+                  
+                  <div class="flex space-x-2">
+                    <span *ngIf="listing.petFriendly" class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Pet Friendly</span>
+                    <span *ngIf="listing.furnished" class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">Furnished</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Roommate Matches Tab -->
+        <div *ngIf="activeTab === 'matches'">
+          <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Roommate Matches</h1>
+            <p class="text-gray-600">Discover compatible roommates based on your preferences</p>
+          </div>
+
+          <div *ngIf="matchedProfiles.length === 0" class="text-center py-12">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No matches found</h3>
+            <p class="text-gray-600">Check back later for new potential roommates</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div *ngFor="let profile of matchedProfiles" class="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow">
+              <div class="relative">
+                <img 
+                  [src]="profile.profileImage || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg'" 
+                  [alt]="profile.fullName"
+                  class="w-full h-64 object-cover"
+                >
+                <div class="absolute top-4 right-4 bg-white rounded-full px-3 py-1">
+                  <span class="text-green-600 font-bold">{{ profile.matchPercentage }}%</span>
+                </div>
+              </div>
+              
+              <div class="p-6">
+                <div class="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 class="text-xl font-semibold text-gray-900">{{ profile.fullName }}</h3>
+                    <p class="text-gray-600">{{ profile.age }} • {{ profile.occupation }}</p>
+                  </div>
+                </div>
+                
+                <div class="space-y-2 mb-4">
+                  <div class="flex items-center text-sm text-gray-600">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                    {{ profile.budgetRange }}
+                  </div>
+                  <div class="flex items-center text-sm text-gray-600">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    {{ profile.locationPreference }}
+                  </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span *ngFor="let interest of profile.sharedInterests" 
+                        class="px-2 py-1 bg-primary-100 text-primary-700 text-xs rounded-full">
+                    {{ interest }}
+                  </span>
+                </div>
+                
+                <div class="flex space-x-2">
                   <button 
-                    (click)="activeTab = 'matches'"
-                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    (click)="swipeLeft(profile)"
+                    class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg transition-colors"
                   >
-                    👥 Chat with Matched Profiles
+                    Pass
+                  </button>
+                  <button 
+                    (click)="swipeRight(profile)"
+                    class="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Like
                   </button>
                 </div>
               </div>
             </div>
-            
-            <!-- Message Input (disabled when no conversation selected) -->
-            <div class="border-t border-gray-200 p-4 bg-white">
-              <div class="flex items-center space-x-4">
-                <input 
-                  type="text" 
-                  placeholder="Select a conversation to start messaging..."
-                  disabled
-                  class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
-                >
-                <button 
-                  disabled
-                  class="bg-gray-300 text-gray-500 px-6 py-2 rounded-lg cursor-not-allowed"
-                >
-                  Send
-                </button>
+          </div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div *ngIf="activeTab === 'messages'">
+          <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Messages</h1>
+            <p class="text-gray-600">Chat with your matches</p>
+          </div>
+
+          <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="flex h-96">
+              <!-- Chat List -->
+              <div class="w-1/3 border-r border-gray-200">
+                <div class="p-4 border-b border-gray-200">
+                  <h3 class="font-semibold text-gray-900">Conversations</h3>
+                </div>
+                <div class="overflow-y-auto h-full">
+                  <div *ngFor="let profile of matchedProfiles.slice(0, 3)" 
+                       (click)="selectProfile(profile)"
+                       [class.bg-primary-50]="selectedProfile?.id === profile.id"
+                       class="p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50">
+                    <div class="flex items-center space-x-3">
+                      <img 
+                        [src]="profile.profileImage || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg'" 
+                        [alt]="profile.fullName"
+                        class="w-10 h-10 rounded-full object-cover"
+                      >
+                      <div class="flex-1 min-w-0">
+                        <p class="font-medium text-gray-900 truncate">{{ profile.fullName }}</p>
+                        <p class="text-sm text-gray-500 truncate">{{ profile.matchPercentage }}% match</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat Area -->
+              <div class="flex-1 flex flex-col">
+                <div *ngIf="!selectedProfile" class="flex-1 flex items-center justify-center">
+                  <div class="text-center">
+                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <p class="text-gray-500">Select a conversation to start chatting</p>
+                  </div>
+                </div>
+
+                <div *ngIf="selectedProfile" class="flex-1 flex flex-col">
+                  <!-- Chat Header -->
+                  <div class="p-4 border-b border-gray-200">
+                    <div class="flex items-center space-x-3">
+                      <img 
+                        [src]="selectedProfile.profileImage || 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg'" 
+                        [alt]="selectedProfile.fullName"
+                        class="w-10 h-10 rounded-full object-cover"
+                      >
+                      <div>
+                        <p class="font-medium text-gray-900">{{ selectedProfile.fullName }}</p>
+                        <p class="text-sm text-gray-500">{{ selectedProfile.matchPercentage }}% match</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Messages -->
+                  <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div *ngFor="let message of getChatMessages(selectedProfile.id)" 
+                         [class.justify-end]="message.isOwn"
+                         class="flex">
+                      <div [class.bg-primary-500]="message.isOwn"
+                           [class.text-white]="message.isOwn"
+                           [class.bg-gray-200]="!message.isOwn"
+                           [class.text-gray-900]="!message.isOwn"
+                           class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
+                        <p class="text-sm">{{ message.text }}</p>
+                        <p [class.text-primary-100]="message.isOwn"
+                           [class.text-gray-500]="!message.isOwn"
+                           class="text-xs mt-1">
+                          {{ message.timestamp | date:'short' }}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div *ngIf="isTyping" class="flex">
+                      <div class="bg-gray-200 text-gray-900 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
+                        <p class="text-sm">{{ selectedProfile.fullName }} is typing...</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Message Input -->
+                  <div class="p-4 border-t border-gray-200">
+                    <div class="flex space-x-2">
+                      <input 
+                        [(ngModel)]="newMessage"
+                        (keyup.enter)="sendMessage()"
+                        type="text" 
+                        placeholder="Type a message..."
+                        class="flex-1 form-input"
+                      >
+                      <button 
+                        (click)="sendMessage()"
+                        [disabled]="!newMessage.trim()"
+                        class="btn-primary disabled:opacity-50"
+                      >
+                        Send
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Profile Tab -->
-    <div *ngIf="activeTab === 'profile'">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Profile Info -->
-        <div class="lg:col-span-2">
-          <div class="bg-white rounded-xl shadow-lg p-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">👤 My Profile</h2>
-            
+        <!-- Profile Tab -->
+        <div *ngIf="activeTab === 'profile'">
+          <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
+            <p class="text-gray-600">Manage your profile information</p>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-6" *ngIf="currentUser">
+            <div class="flex items-center space-x-6 mb-8">
+              <div class="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center">
+                <span class="text-primary-600 font-bold text-2xl">{{ getInitials(currentUser.fullName) }}</span>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-gray-900">{{ currentUser.fullName }}</h2>
+                <p class="text-gray-600">{{ currentUser.occupation }}</p>
+                <p class="text-sm text-gray-500">Member since {{ currentUser.createdAt | date:'MMMM yyyy' }}</p>
+              </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                <input 
-                  type="text" 
-                  [value]="currentUser?.fullName || ''"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Email</label>
+                    <p class="text-gray-900">{{ currentUser.email }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Age</label>
+                    <p class="text-gray-900">{{ currentUser.age }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Gender</label>
+                    <p class="text-gray-900">{{ currentUser.gender }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">College</label>
+                    <p class="text-gray-900">{{ currentUser.college || 'Not specified' }}</p>
+                  </div>
+                </div>
               </div>
-              
+
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input 
-                  type="email" 
-                  [value]="currentUser?.email || ''"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Age</label>
-                <input 
-                  type="number" 
-                  [value]="currentUser?.age || ''"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Occupation</label>
-                <input 
-                  type="text" 
-                  [value]="currentUser?.occupation || ''"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
-                <input 
-                  type="text" 
-                  [value]="currentUser?.budgetRange || ''"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-              </div>
-              
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Location Preference</label>
-                <input 
-                  type="text" 
-                  [value]="currentUser?.locationPreference || ''"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Preferences</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Sleep Schedule</label>
+                    <p class="text-gray-900">{{ currentUser.sleepSchedule }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Cleanliness Level</label>
+                    <p class="text-gray-900">{{ currentUser.cleanlinessLevel }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Smoking</label>
+                    <p class="text-gray-900">{{ currentUser.smokingPreference }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Pet Friendly</label>
+                    <p class="text-gray-900">{{ currentUser.petFriendly }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Budget Range</label>
+                    <p class="text-gray-900">{{ currentUser.budgetRange }}</p>
+                  </div>
+                  <div>
+                    <label class="text-sm font-medium text-gray-500">Location Preference</label>
+                    <p class="text-gray-900">{{ currentUser.locationPreference }}</p>
+                  </div>
+                </div>
               </div>
             </div>
-            
+
             <div class="mt-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">About Me</label>
-              <textarea 
-                rows="4"
-                [value]="currentUser?.aboutMe || ''"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              ></textarea>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">About Me</h3>
+              <p class="text-gray-700">{{ currentUser.aboutMe }}</p>
             </div>
-            
-            <div class="mt-8 flex space-x-4">
-              <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                💾 Save Changes
-              </button>
-              <button class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors">
-                🔄 Reset
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Profile Stats -->
-        <div class="space-y-6">
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">📊 Profile Stats</h3>
-            <div class="space-y-4">
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Profile Completeness</span>
-                <span class="font-semibold text-green-600">85%</span>
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2">
-                <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
-              </div>
-              
-              <div class="flex justify-between items-center pt-4">
-                <span class="text-gray-600">Profile Views</span>
-                <span class="font-semibold text-blue-600">127</span>
-              </div>
-              
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Profile Matches</span>
-                <span class="font-semibold text-green-600">{{ matchedProfiles.length }}</span>
-              </div>
-              
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Apartments Saved</span>
-                <span class="font-semibold text-red-600">12</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">⚙️ Account Settings</h3>
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <span class="text-gray-700">Email Notifications</span>
-                <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-700">SMS Alerts</span>
-                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-700">Profile Visibility</span>
-                <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Contact Support Section (Bottom of all tabs) -->
-    <div class="mt-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl shadow-lg p-8 text-white">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div>
-          <h3 class="text-2xl font-bold mb-4">📞 Need Help? Contact Support</h3>
-          <p class="text-blue-100 mb-6">Our professional support team is available 24/7 to assist you with any questions or concerns.</p>
-          
-          <div class="space-y-3 mb-6">
-            <div class="flex items-center space-x-3">
-              <span class="text-xl">📞</span>
-              <span>Call: (555) 123-RENT (7368)</span>
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <button class="btn-primary">Edit Profile</button>
             </div>
-            <div class="flex items-center space-x-3">
-              <span class="text-xl">📧</span>
-              <span>Email: support&#64;homemate.com</span>
-            </div>
-            <div class="flex items-center space-x-3">
-              <span class="text-xl">💬</span>
-              <span>Live Chat: Available 24/7</span>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <button class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 px-4 rounded-lg transition-all backdrop-blur-sm font-medium">
-              📞 Call Now
-            </button>
-            <button class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-3 px-4 rounded-lg transition-all backdrop-blur-sm font-medium">
-              💬 Live Chat
-            </button>
-          </div>
-        </div>
-        
-        <div>
-          <h4 class="text-xl font-bold mb-4">🚀 Quick Support Topics</h4>
-          <div class="grid grid-cols-1 gap-3">
-            <button class="bg-white bg-opacity-10 hover:bg-opacity-20 text-left p-4 rounded-lg transition-all backdrop-blur-sm">
-              <div class="font-semibold">🏠 Apartment Issues</div>
-              <div class="text-sm text-blue-100">Report problems or ask questions about apartments</div>
-            </button>
-            <button class="bg-white bg-opacity-10 hover:bg-opacity-20 text-left p-4 rounded-lg transition-all backdrop-blur-sm">
-              <div class="font-semibold">💳 Payment Help</div>
-              <div class="text-sm text-blue-100">Billing questions and payment assistance</div>
-            </button>
-            <button class="bg-white bg-opacity-10 hover:bg-opacity-20 text-left p-4 rounded-lg transition-all backdrop-blur-sm">
-              <div class="font-semibold">👤 Account Support</div>
-              <div class="text-sm text-blue-100">Profile settings and account management</div>
-            </button>
           </div>
         </div>
       </div>
