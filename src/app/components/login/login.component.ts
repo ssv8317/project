@@ -77,7 +77,7 @@ import { AuthService } from '../../services/auth.service';
             <!-- Demo Credentials Info -->
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p class="text-blue-800 text-sm font-medium mb-2">Demo Login:</p>
-              <p class="text-blue-700 text-xs">Email: john.doe@example.com</p>
+              <p class="text-blue-700 text-xs">Email: john.doe&#64;example.com</p>
               <p class="text-blue-700 text-xs">Password: Any password</p>
             </div>
 
