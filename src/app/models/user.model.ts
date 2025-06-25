@@ -14,6 +14,7 @@ export interface User {
   locationPreference: string;
   aboutMe: string;
   createdAt?: Date;         // Added this field
+  updatedAt?: Date;         // Added this field to fix the error
 }
 
 export interface LoginRequest {
