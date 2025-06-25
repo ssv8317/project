@@ -103,9 +103,90 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initializeMockData();
     this.checkOrRedirectProfile();
     this.loadFeaturedListings();
     this.initializeChatMessages();
+  }
+
+  /**
+   * Initialize mock data for development/testing
+   */
+  private initializeMockData(): void {
+    // Mock current user data
+    if (!this.currentUser) {
+      this.currentUser = {
+        id: 'mock-user-1',
+        email: 'john.doe@example.com',
+        fullName: 'John Doe',
+        age: 25,
+        gender: 'Male',
+        occupation: 'Software Engineer',
+        college: 'University of Technology',
+        sleepSchedule: 'Early Bird',
+        cleanlinessLevel: 'Very Clean',
+        smokingPreference: 'Non-smoker',
+        petFriendly: 'Yes',
+        budgetRange: '$1500-2000',
+        locationPreference: 'Downtown',
+        aboutMe: 'I am a software engineer who loves coding, hiking, and trying new restaurants. Looking for a clean, respectful roommate to share a great living space.',
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date()
+      };
+    }
+
+    // Mock matched profiles
+    if (this.matchedProfiles.length === 0) {
+      this.matchedProfiles = [
+        {
+          id: '1',
+          fullName: 'Sarah Johnson',
+          age: 24,
+          occupation: 'Marketing Specialist',
+          budgetRange: '$1400-1800',
+          locationPreference: 'Downtown',
+          matchPercentage: 92,
+          sharedInterests: ['Fitness', 'Cooking', 'Movies'],
+          profileImage: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg',
+          lastActive: new Date()
+        },
+        {
+          id: '2',
+          fullName: 'Mike Chen',
+          age: 26,
+          occupation: 'Software Developer',
+          budgetRange: '$1600-2000',
+          locationPreference: 'Tech District',
+          matchPercentage: 88,
+          sharedInterests: ['Gaming', 'Tech', 'Coffee'],
+          profileImage: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg',
+          lastActive: new Date()
+        },
+        {
+          id: '3',
+          fullName: 'Emily Rodriguez',
+          age: 23,
+          occupation: 'Graphic Designer',
+          budgetRange: '$1300-1700',
+          locationPreference: 'Arts District',
+          matchPercentage: 85,
+          sharedInterests: ['Art', 'Music', 'Photography'],
+          profileImage: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg',
+          lastActive: new Date()
+        }
+      ];
+    }
+  }
+
+  /**
+   * Safely get the first name from the current user
+   */
+  getFirstName(): string {
+    if (!this.currentUser || !this.currentUser.fullName) {
+      return 'User';
+    }
+    const nameParts = this.currentUser.fullName.split(' ');
+    return nameParts.length > 0 ? nameParts[0] : 'User';
   }
 
   /**
@@ -115,17 +196,19 @@ export class DashboardComponent implements OnInit {
    */
   private checkOrRedirectProfile(): void {
     this.authService.getCurrentUser().subscribe(user => {
-      this.currentUser = user;
-      if (!user) {
+      if (user) {
+        this.currentUser = user;
+      }
+      if (!this.currentUser) {
         this.router.navigate(['/login']);
         return;
       }
-      if (!user.id) {
+      if (!this.currentUser.id) {
         this.router.navigate(['/profile-setup']);
         return;
       }
       // Only call if user.id is defined
-      this.matchService.getRoommateProfile(user.id as string).subscribe({
+      this.matchService.getRoommateProfile(this.currentUser.id as string).subscribe({
         next: (profile) => {
           if (!profile) {
             this.router.navigate(['/profile-setup']);
@@ -219,7 +302,7 @@ export class DashboardComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading matched profiles:', error);
-        this.matchedProfiles = [];
+        // Keep mock data on error
       }
     });
   }
